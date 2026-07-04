@@ -25,14 +25,9 @@ can approve or reject requests and manage halls and users.
 - Mongoose
 
 ## Installation
-
-```bash
 git clone https://github.com/Swasthika-P-S/hall-booking-portal.git
-```
-
-```bash
 cd hall-booking-portal
 npm install
 npm start
-```
+
 
