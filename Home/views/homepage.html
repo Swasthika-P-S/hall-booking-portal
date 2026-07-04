@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Homepage</title>
+</head>
+<body>
+  <h1>Welcome, <span id="userName">Guest</span>!</h1>
+  <p>Email: <span id="userEmail">Not Available</span></p>
+  
+  <script>
+    function getCookie(name) {
+      let cookieArr = document.cookie.split(";");
+      
+      for (let i = 0; i < cookieArr.length; i++) {
+        let cookiePair = cookieArr[i].split("=");
+        
+        if (name == cookiePair[0].trim()) {
+          return decodeURIComponent(cookiePair[1]);
+        }
+      }
+      return null;
+    }
+    const userName = getCookie("userName");
+    const userEmail = getCookie("userEmail");
+    if (userName && userEmail) {
+      document.getElementById("userName").textContent = userName;
+      document.getElementById("userEmail").textContent = userEmail;
+    }
+  </script>
+</body>
+</html>

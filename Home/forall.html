@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <title>All Bookings</title>
+  <!-- Include Flatpickr CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
+  <script>
+    if (!localStorage.getItem("email")) {
+    window.location.href = "/";
+    }  
+  </script>
+<style>
+:root {
+      --bg-color: #0A0A0F;
+      --text-color: #E0E0E0;
+      --card-bg: rgba(20, 20, 30, 0.9);
+      --nav-bg: rgba(10, 10, 15, 0.9);
+      --input-bg: rgba(40, 40, 50, 0.8);
+      --gradient: linear-gradient(135deg, #6F42C1 , #BB86FC);
+      --gradient1: linear-gradient(235deg, #6F42C1 , #BB86FC);
+      --shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      --border: rgba(107, 52, 245, 0.2);
+}
+.light-mode {
+            --bg-color: #F5F6FA;
+            --text-color: #333;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --nav-bg: rgba(245, 246, 250, 0.9);
+            --input-bg: rgba(240, 240, 245, 0.8);
+            --table-cell-bg: rgba(230, 230, 235, 0.8);
+            --gradient: linear-gradient(135deg, #FFA07A , #FF69B4);
+            --gradient1: linear-gradient(235deg, #FFA07A , #FF69B4);
+            --gradient-start: #FF758C;
+            --gradient-end: #FCD968;
+            --shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            --border: rgba(0, 0, 0, 0.2);
+            --accent-color: #FF758C;
+        }
+body {
+font-family: 'Inter', sans-serif;
+margin: 0;
+padding: 0;
+background: var(--bg-color);
+color: var(--text-color);
+overflow-x: hidden;
+position: relative;
+transition: background 0.3s, color 0.3s;
+}
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+#particles {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+pointer-events: none;
+z-index: -1;
+}
+.navbar {
+display: flex;
+justify-content: space-between;
+align-items: center;
+background: var(--nav-bg);
+padding: 20px 40px;
+box-shadow: var(--shadow);
+position: sticky;
+top: 0;
+z-index: 1000;
+backdrop-filter: blur(10px);
+transition: background 0.3s, box-shadow 0.3s;
+}
+.nav-links {
+list-style: none;
+display: flex;
+align-items: center;
+}
+.nav-links li {
+margin: 0 20px;
+}
+.nav-links a {
+color: var(--text-color);
+text-decoration: none;
+font-weight: 600;
+font-size: 16px;
+transition: color 0.3s, transform 0.3s;
+}
+.nav-links a:hover {
+color: #6B34F5;
+transform: translateY(-2px);
+}
+.hamburger {
+display: none;
+font-size: 28px;
+color: var(--text-color);
+cursor: pointer;
+transition: color 0.3s;
+}
+@media (max-width: 768px) {
+.nav-links {
+ display: none;
+ flex-direction: column;
+ background: var(--nav-bg);
+ position: absolute;
+ top: 80px;
+ left: 0;
+ width: 100%;
+ text-align: center;
+ padding: 20px 0;
+ transition: background 0.3s;
+}
+.nav-links.active {
+ display: flex;
+}
+.hamburger {
+ display: block;
+}
+.nav-links li{
+ margin-bottom: 10px;
+}
+}
+#logo {
+height: 60px;
+filter: brightness(1.2);
+}
+#logout-btn {
+background: var(--gradient);
+color: #fff;
+border: none;
+padding: 12px 24px;
+font-size: 14px;
+font-weight: 600;
+border-radius: 25px;
+cursor: pointer;
+transition: transform 0.3s, box-shadow 0.3s;
+box-shadow: 0 4px 15px rgba(107, 52, 245, 0.4);
+}
+#logout-btn:hover {
+transform: scale(1.05);
+box-shadow: 0 6px 20px rgba(107, 52, 245, 0.6);
+}
+#logout-btn:active {
+background: #4a20b3;
+transform: scale(0.98);
+}
+h1 {
+text-align: center;
+margin: 60px 0 40px;
+color: var(--text-color);
+font-size: 36px;
+font-weight: 700;
+text-transform: uppercase;
+letter-spacing: 2px;
+background: var(--gradient);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+transition: color 0.3s;
+}
+.mode-toggle {
+position: relative;
+width: 60px;
+height: 30px;
+background: var(--gradient);
+border-radius: 25px;
+cursor: pointer;
+overflow: hidden;
+}
+.slider {
+position: absolute;
+top: 2px;
+left: 2px;
+width: 26px;
+height: 26px;
+background: #fff;
+border-radius: 50%;
+transition: transform 0.3s ease;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 18px;
+}
+.light-mode .slider {
+transform: translateX(30px);
+}
+.filters select {
+  padding: 12px;
+  border: 2px dashed var(--border);
+  border-radius: 8px;
+  width: 100%;
+  text-align: center;
+  font-size: 14px;
+  cursor: pointer;
+  background: var(--input-bg);
+  color: var(--text-color);
+  transition: border-color 0.3s, background 0.3s, color 0.3s;
+ }
+ #date{
+  padding: 12px;
+  border: 2px dashed var(--border);
+  border-radius: 8px;
+  width: 100%;
+  text-align: center;
+  font-size: 14px;
+  cursor: pointer;
+  background: var(--input-bg);
+  color: var(--text-color);
+  transition: border-color 0.3s, background 0.3s, color 0.3s;
+  margin-bottom: 20px;
+ }
+ nav ul li .dropdown-content {
+display: none;
+position: absolute;
+background-color: #f9f9f9;
+min-width: 160px;
+box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+z-index: 1;
+left: 0;
+top: 100%;
+margin-top: 10px;
+}
+nav ul li {
+position: relative;
+}
+
+ nav ul li .dropdown-content a {
+     color: black;
+     padding: 12px 16px;
+     text-decoration: none;
+     display: block;
+     text-align: left;
+ }
+ nav ul li .dropdown-content a:hover {
+     background-color: #ddd;
+ }
+ nav ul li:hover .dropdown-content {
+     display: block;
+ }
+ nav ul li.show .dropdown-content {
+display: block;
+}
+.filters {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--card-bg);
+  border-radius: 15px;
+  box-shadow: var(--shadow);
+  max-width: auto;
+  margin: 30px auto;
+  border: 1px solid var(--border);
+  transition: background 0.3s, box-shadow 0.3s, border 0.3s;
+    }
+  .filters div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+  }
+    label {
+      font-weight: 600;
+      color: var(--text-color);
+      font-size: 16px;
+      transition: color 0.3s;
+      text-align: center;
+      margin-bottom: 20px;
+      margin-top: 20px;
+  }
+  .table-container {
+      width: 100%;
+      overflow-x: auto;
+      margin-top: 20px;
+      padding: 0 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 350px;
+      background: var(--card-bg);
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+    th, td {
+      padding: 12px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.3s;
+    }
+    th {
+      background: var(--gradient);
+      color: #fff;
+      font-weight: 600;
+    }
+    td {
+      background: var(--table-cell-bg);
+    }
+    tr:hover {
+      background: rgba(107, 52, 245, 0.1);
+      transition: 0.3s;
+    }
+    @media (max-width: 600px) {
+  th, td {
+        padding: 10px;
+        font-size: 14px;
+      }
+} 
+@media (max-width: 768px) {
+  th, td {
+        padding: 10px;
+        font-size: 14px;
+      }
+} 
+</style>
+</head>
+
+<body>
+  <canvas id="particles"></canvas>
+  <nav class="navbar">
+    <img src="/images/logo.png" id="logo">
+    <ul class="nav-links">
+      <li class="dropdown">
+        <a href="#" class="dropbtn">Teacher Availability</a>
+        <div class="dropdown-content">
+            <a href="/ccm">CCM Scheduler</a>
+            <a href="/gds">GDS Scheduler</a>
+            <a href="/ftm">FTM</a>
+        </div>
+    </li>
+      <li class="dropdown">
+          <a href="#" class="dropbtn">Classroom</a>
+          <div class="dropdown-content">
+              <a href="/bookclass">Book Class</a>
+              <a href="/displayclass">Check Availability</a>
+              <a href="/locations">Manage Classrooms</a>
+          </div>
+      </li>
+      <li class="dropdown">
+          <a href="#" class="dropbtn">Hall</a>
+          <div class="dropdown-content">
+              <a href="/booking">Book Hall</a>
+              <a href="/forall">Check Availability</a>
+              <a href="/showuserbooking">Authorize Bookings</a>
+              <a href="/viewbooking">Check Bookings</a>
+          </div>
+      </li>
+      <li class="dropdown">
+          <a href="/homepage">Home</a>
+      </li>
+      <li><button id="logout-btn">Logout</button></li>
+      <li><div class="mode-toggle" id="mode-toggle"><div class="slider">🌙</div></div></li>
+    </ul>
+    <div class="hamburger" onclick="toggleMenu()">☰</div>
+  </nav> 
+  <div class="filters" style="margin-top: 30px;">
+    <div>
+      <label for="venue">Venue:</label>
+      <select id="venue">
+        <option value="all">All</option>
+        <option value="Anugraha Hall">Anugraha Hall</option>
+        <option value="Seminar Hall 1">Seminar Hall 1</option>
+        <option value="Seminar Hall 2">Seminar Hall 2</option>
+      </select>
+    </div>
+    <div>
+      <label for="date">Date:</label>
+      <input type="date" id="date">
+    </div>
+  </div>
+<div class="tabholder"><table id="bookings-table">
+  <thead>
+    <tr>
+      <th>Venue</th>
+      <th>Date</th>
+      <th>Start Time</th>
+      <th>End Time</th>
+      <th>Message</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td colspan="5">Loading...</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+  <!-- Include Flatpickr JS -->
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+    let dropdown = document.querySelector(".dropdown");
+    let dropdownMenu = dropdown.querySelector("ul");
+    let timeout;
+
+    dropdown.addEventListener("mouseenter", function() {
+        clearTimeout(timeout);
+        dropdownMenu.style.display = "block";
+    });
+
+    dropdown.addEventListener("mouseleave", function() {
+        timeout = setTimeout(() => {
+            dropdownMenu.style.display = "none";
+        }, 200); // Adjust delay time if needed
+    });
+
+    dropdownMenu.addEventListener("mouseenter", function() {
+        clearTimeout(timeout);
+    });
+
+    dropdownMenu.addEventListener("mouseleave", function() {
+        timeout = setTimeout(() => {
+            dropdownMenu.style.display = "none";
+        }, 200);
+    });
+});
+const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const particlesArray = [];
+        class Particle {
+            constructor() {
+             this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.size = Math.random() * 2 + 1;
+            this.speedX = Math.random() * 0.5 - 0.25;
+            this.speedY = Math.random() * 0.5 - 0.25;
+            this.opacity = Math.random() * 0.5 + 0.2;
+        }
+        update() {
+            this.x += this.speedX;
+            this.y += this.speedY;
+            if (this.x > canvas.width) this.x = 0;
+            else if (this.x < 0) this.x = canvas.width;
+            if (this.y > canvas.height) this.y = 0;
+            else if (this.y < 0) this.y = canvas.height;
+        }
+        draw() {
+            ctx.fillStyle = document.body.classList.contains('light-mode') ? `rgba(255, 117, 140, ${this.opacity})` : `rgba(107, 52, 245, ${this.opacity})`;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        }
+        for (let i = 0; i < 100; i++) {
+        particlesArray.push(new Particle());
+        }
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particlesArray.forEach(particle => {
+            particle.update();
+            particle.draw();
+        });
+        requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+        window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        });
+        const modeToggle = document.getElementById('mode-toggle');
+        modeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('light-mode');
+        localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
+        modeToggle.querySelector('.slider').textContent = document.body.classList.contains('light-mode') ? '☀️' : '🌙';
+        });
+        window.addEventListener('DOMContentLoaded', () => {
+        if (localStorage.getItem('theme') === 'light') {
+        document.body.classList.add('light-mode');
+        modeToggle.querySelector('.slider').textContent = '☀️';
+        } else {
+            modeToggle.querySelector('.slider').textContent = '🌙';
+        }
+    });
+
+    const venueSelect = document.getElementById('venue');
+    const dateInput = document.getElementById('date');
+    const bookingsTable = document.getElementById('bookings-table').querySelector('tbody');
+
+    // Set the default value of the date input to the current date (today's date)
+    const today = new Date();
+    const day = String(today.getDate()).padStart(2, '0'); // Add leading zero if necessary
+    const month = String(today.getMonth() + 1).padStart(2, '0'); // Add leading zero if necessary
+    const year = today.getFullYear();
+
+    // Format the date as 'yyyy-mm-dd'
+    const formattedDate = `${year}-${month}-${day}`;
+    dateInput.value = formattedDate;
+
+    // Function to fetch and display bookings based on the current venue and date
+    async function fetchFilteredBookings() {
+      const venue = venueSelect.value;
+      const date = dateInput.value;
+      const url = `/api/filtered-bookings?venue=${venue}&date=${date}`;
+
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Failed to fetch bookings');
+        const data = await response.json();
+
+        bookingsTable.innerHTML = ''; // Clear the table
+        if (data.bookings.length === 0) {
+          bookingsTable.innerHTML = '<tr><td colspan="5">No bookings found.</td></tr>';
+          return;
+        }
+
+        data.bookings.forEach(booking => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${booking.venue}</td>
+            <td>${booking.date}</td>
+            <td>${booking.startTime}</td>
+            <td>${booking.endTime}</td>
+            <td>${booking.message}</td>
+          `;
+          bookingsTable.appendChild(row);
+        });
+      } catch (error) {
+        console.error('Error fetching filtered bookings:', error);
+        bookingsTable.innerHTML = '<tr><td colspan="5">Failed to load bookings.</td></tr>';
+      }
+    }
+
+    // Listen for changes to the venue and date inputs to automatically fetch data
+    venueSelect.addEventListener('change', fetchFilteredBookings);
+    dateInput.addEventListener('change', fetchFilteredBookings);
+
+    // Initial load with default filters
+    fetchFilteredBookings();
+
+    // Initialize Flatpickr for the date input
+    flatpickr(dateInput, {
+      dateFormat: "Y-m-d", // Format for the date (same as the default input date)
+      allowInput: true, // Allow manual input
+      weekNumbers: true, // Show week numbers
+      minDate: "today", // Disable past dates (optional)
+    });
+// Optional: Hide the dropdown when clicking outside of it
+document.addEventListener('click', function (event) {
+    const popper = document.querySelector('.popperforvatar');
+    const vatar = document.querySelector('.vatar');
+    if (popper && !vatar.contains(event.target) && !popper.contains(event.target)) {
+        popper.style.display = 'none';
+    }
+});
+const logoutBtn = document.getElementById('logout-btn');
+logoutBtn.addEventListener('click', () => {
+    // Clear cookies
+    document.cookie = 'userName=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    document.cookie = 'userEmail=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    localStorage.removeItem('email');
+    localStorage.removeItem('userEmail');
+    history.replaceState(null, null, "/");
+    // Redirect to LoginPage
+    window.location.href = '/';
+});
+gsap.from('.navbar', { duration: 1, y: -50, opacity: 0, ease: 'power3.out' });
+        gsap.from('h1', { duration: 1, opacity: 0, y: 50, ease: 'power3.out', delay: 0.2 });
+        gsap.from('.form-container', { duration: 1, opacity: 0, scale: 0.9, ease: 'power3.out', delay: 0.4 });
+        function toggleMenu() {
+      const navLinks = document.querySelector('.nav-links');
+      navLinks.classList.toggle('active');
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+    const dropdowns = document.querySelectorAll('.dropdown');
+
+    dropdowns.forEach(dropdown => {
+      const button = dropdown.querySelector('.dropbtn');
+
+      button.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        // Close other dropdowns
+        dropdowns.forEach(d => {
+          if (d !== dropdown) d.classList.remove('show');
+        });
+
+        // Toggle current dropdown
+        dropdown.classList.toggle('show');
+      });
+    });
+
+    // Close all dropdowns on outside click
+    document.addEventListener('click', function (e) {
+      dropdowns.forEach(dropdown => {
+        if (!dropdown.contains(e.target)) {
+          dropdown.classList.remove('show');
+        }
+      });
+    });
+  });
+  </script>
+</body>
+</html>

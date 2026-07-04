@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <title>Final Displayer</title>
+    <script>
+        if (!localStorage.getItem("email")) {
+        window.location.href = "/";
+        }  
+      </script>
+    <style>
+        html {overflow-x: hidden;
+        }
+        :root {
+      --bg-color: #0A0A0F;
+      --text-color: #E0E0E0;
+      --card-bg: rgba(20, 20, 30, 0.9);
+      --nav-bg: rgba(10, 10, 15, 0.9);
+      --input-bg: rgba(40, 40, 50, 0.8);
+      --gradient: linear-gradient(135deg, #6F42C1 , #BB86FC);
+      --gradient1: linear-gradient(235deg, #6F42C1 , #BB86FC);
+      --shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      --border: rgba(107, 52, 245, 0.2);
+}
+    .light-mode {
+            --bg-color: #F5F6FA;
+            --text-color: #333;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --nav-bg: rgba(245, 246, 250, 0.9);
+            --input-bg: rgba(240, 240, 245, 0.8);
+            --table-cell-bg: rgba(230, 230, 235, 0.8);
+            --gradient: linear-gradient(135deg, #FFA07A , #FF69B4);
+            --gradient1: linear-gradient(235deg, #FFA07A , #FF69B4);
+            --gradient-start: #FF758C;
+            --gradient-end: #FCD968;
+            --shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            --border: rgba(0, 0, 0, 0.2);
+            --accent-color: #FF758C;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: var(--bg-color);
+      color: var(--text-color);
+      overflow-x: hidden;
+      position: relative;
+      transition: background 0.3s, color 0.3s;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    #particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--nav-bg);
+      padding: 20px 40px;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      backdrop-filter: blur(10px);
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+    .nav-links {
+      list-style: none;
+      display: flex;
+      align-items: center;
+    }
+    .nav-links li {
+      margin: 0 20px;
+    }
+    .nav-links a {
+      color: var(--text-color);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 16px;
+      transition: color 0.3s, transform 0.3s;
+    }
+    .nav-links a:hover {
+      color: #6B34F5;
+      transform: translateY(-2px);
+    }
+    .hamburger {
+      display: none;
+      font-size: 28px;
+      color: var(--text-color);
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        background: var(--nav-bg);
+        position: absolute;
+        top: 80px;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        padding: 20px 0;
+        transition: background 0.3s;
+      }
+      .nav-links.active {
+        display: flex;
+      }
+      .hamburger {
+        display: block;
+      }
+      .nav-links li{
+        margin-bottom: 10px;
+      }
+    }
+    #logo {
+      height: 60px;
+      filter: brightness(1.2);
+    }
+    #logout-btn {
+      background: var(--gradient);
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+      box-shadow: 0 4px 15px rgba(107, 52, 245, 0.4);
+    }
+    #logout-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(107, 52, 245, 0.6);
+    }
+    #logout-btn:active {
+      background: #4a20b3;
+      transform: scale(0.98);
+    }
+    h1 {
+      text-align: center;
+      margin: 60px 0 40px;
+      color: var(--text-color);
+      font-size: 36px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      transition: color 0.3s;
+    }
+    .mode-toggle {
+      position: relative;
+      width: 60px;
+      height: 30px;
+      background: var(--gradient);
+      border-radius: 25px;
+      cursor: pointer;
+      overflow: hidden;
+    }
+    .slider {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 26px;
+      height: 26px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .light-mode .slider {
+      transform: translateX(30px);
+    }
+        #dateDisplay {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .container {position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            margin: 10px;
+            margin-bottom: 5%;
+        }
+
+        .box {
+            width: 90%;
+            background: var(--card-bg);
+            color: black;
+            display: flex;
+            flex-wrap: wrap;
+            /* Makes sure locations are in a row */
+            justify-content: flex-start;
+            align-items: center;
+            font-size: 18px;
+            border-radius: 8px;
+            padding: 10px;
+            min-height: 100px;
+        }
+
+        .box-title {
+            width: 100%;
+            font-size: 1.2em;
+            font-weight: 900;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            color: var(--text-color);
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: color 0.3s;
+
+        }
+
+        .location-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 60px;
+  margin: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 12px;
+  text-align: center;
+  background: #e0e0e0; /* fallback default */
+  color: #000;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+}
+.location-item:hover {
+  transform: scale(1.05);
+}
+
+
+        @media (min-width: 768px) {
+            .container {
+                flex-wrap: wrap;
+                flex-direction: row;
+                justify-content: space-around;
+            }
+
+            .box {
+                width: 90%;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .box {
+                width: 90%;
+            }
+        }
+        .card {
+            width: 280px;
+            background-color: #fff;
+            color: black;
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;cursor: pointer;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .slot-list {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .slot {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 12px;
+            width: 100%;
+            border-radius: 5px;
+            font-size: 16px;
+            text-align: center;
+        }
+.container1 {
+    position: relative;width: 90%;margin: 10px;padding: 10px;
+    display: flex;
+    padding-bottom: 20px;
+    overflow-x: scroll;
+}
+.container1 .card {
+    position: relative;width: 220px;display: flex;justify-content: center;align-items: center;margin: 10px;
+}.container1 .card .slot {
+    position: relative;width: 220px;display: flex;justify-content: center;align-items: center;margin: 10px;flex-direction: column;
+}
+#datePicker {position: relative;text-align: center;
+    appearance: none; /* Removes default styles */
+    background-color: #f8f9fa; /* Light gray background */
+    border: 2px solid #b80257; /* Blue border */
+    border-radius: 8px; /* Rounded corners */
+    padding: 10px 15px;
+    font-size: 18px;
+    color: #333; /* Dark text */
+    outline: none;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+/* When hovered */
+#datePicker:hover {
+    background-color: #e2e6ea;
+}
+.popup-btn.ok {
+    background: var(--gradient);
+    color: white;
+    margin: 0 auto;
+}
+/* When focused (clicked) */
+#datePicker:focus {
+    border-color: #0056b3;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Optional: Style the calendar dropdown */
+#datePicker::-webkit-calendar-picker-indicator {
+    filter: invert(0.5);
+    cursor: pointer;
+}
+.onlyfordate {
+    position: relative;top: 0;left: 0;width: 100%;display: flex;justify-content: center;overflow: hidden;margin: 10px;margin-bottom: 30px;
+}
+.styleforcont {
+    position: relative;top:0;left: 0;width: 100%;display: flex;justify-content: center;overflow: hidden;
+}
+@media screen and (max-width: 500px){
+    nav ul {
+    width: 100%;
+    list-style: none;
+    display: flex;flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+}
+nav li:first-child {
+     margin-right: 0;
+}
+}
+.popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .popup-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .popup-content {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: var(--shadow);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .popup-overlay.active .popup-content {
+            transform: translateY(0);
+        }
+
+        .popup-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: var(--text-color);
+            text-align: center;
+        }
+
+        .popup-details {
+            margin-bottom: 20px;
+        }
+
+        .popup-detail {
+            display: flex;
+            margin-bottom: 10px;
+        }
+
+        .popup-label {
+            font-weight: bold;
+            width: 120px;
+            color: var(--text-color);
+        }
+
+        .popup-value {
+            flex: 1;
+            color: var(--text-color);
+        }
+
+        .popup-textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--input-bg);
+            color: var(--text-color);
+            margin-bottom: 20px;
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .popup-buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .popup-btn {
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .popup-btn.book {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .popup-btn.cancel {
+            background: transparent;
+            color: var(--text-color);
+            border: 1px solid var(--border);
+        }
+
+        .popup-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        #messageOk {
+            background: var(--gradient);
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            font-weight: 600;
+            margin: 0 10px;
+            margin-top: 10px;
+        }
+        @media (max-width: 600px) {
+      .messmodal{
+    margin-top: 80px;
+  }
+} 
+@media (max-width: 768px) {
+    .messmodal{
+    margin-top: 80px;
+  }
+}
+.messmodal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.6);
+    }
+
+    .messmodal-content {
+      background-color: #fff;
+      margin: 25% auto;
+      padding: 20px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 450px;
+      text-align: center;
+      color: palevioletred
+    }
+    </style>
+</head>
+
+<body>
+    <canvas id="particles"></canvas>
+    <nav class="navbar">
+      <img src="/images/logo.png" id="logo">
+      <ul class="nav-links">
+        <li class="dropdown">
+            <a href="/class">Classroom</a>
+        </li>
+        <li class="dropdown">
+            <a href="/hall">Hall</a>
+        </li>
+        <li class="dropdown">
+            <a href="/homepage">Home</a>
+        </li>
+        <li><button id="logout-btn">Logout</button></li>
+        <li><div class="mode-toggle" id="mode-toggle"><div class="slider">🌙</div></div></li>
+      </ul>
+      <div class="hamburger" onclick="toggleMenu()">☰</div>
+    </nav>
+    <div class="onlyfordate"><input type="date" id="datePicker" min="">
+    </div><div class="styleforcont">
+<div class="container1" id="cardContainer">
+    <!-- Cards will be inserted dynamically here -->
+</div>
+    </div><br>
+    <div class="container">
+        <div class="box" id="groundContainer">
+            <div class="box-title">Ground Floor</div>
+        </div>
+        <div class="box" id="firstContainer">
+            <div class="box-title">First Floor</div>
+        </div>
+        <div class="box" id="secondContainer">
+            <div class="box-title">Second Floor</div>
+        </div>
+        <div class="box" id="thirdContainer">
+            <div class="box-title">Third Floor</div>
+        </div>
+    </div>
+<div class="popup-overlay" id="bookingPopup">
+        <div class="popup-content">
+            <div class="popup-title">Book Location</div>
+            <div class="popup-details">
+                <div class="popup-detail">
+                    <span class="popup-label">Location:</span>
+                    <span class="popup-value" id="popupLocation"></span>
+                </div>
+                <div class="popup-detail">
+                    <span class="popup-label">Date:</span>
+                    <span class="popup-value" id="popupDate"></span>
+                </div>
+                <div class="popup-detail">
+                    <span class="popup-label">Day:</span>
+                    <span class="popup-value" id="popupDay"></span>
+                </div>
+                <div class="popup-detail">
+                    <span class="popup-label">Slot:</span>
+                    <span class="popup-value" id="popupSlot"></span>
+                </div>
+                <div class="popup-detail">
+                    <span class="popup-label">Time:</span>
+                    <span class="popup-value" id="popupTime"></span>
+                </div>
+            </div>
+            <textarea class="popup-textarea" id="popupDescription" placeholder="Enter description (optional)"></textarea>
+            <div class="popup-buttons">
+                <button class="popup-btn cancel" id="popupCancel">Cancel</button>
+                <button class="popup-btn book" id="popupBook">Book</button>
+            </div>
+        </div>
+    </div>
+    <div class="popup-overlay" id="bookingDetailsPopup">
+    <div class="popup-content">
+        <div class="popup-title">Booking Details</div>
+        <div class="popup-details">
+            <div class="popup-detail">
+                <span class="popup-label">Instructor:</span>
+                <span class="popup-value" id="detailsInstructor"></span>
+            </div>
+            <div class="popup-detail">
+                <span class="popup-label">Location:</span>
+                <span class="popup-value" id="detailsLocation"></span>
+            </div>
+            <div class="popup-detail">
+                <span class="popup-label">Date:</span>
+                <span class="popup-value" id="detailsDate"></span>
+            </div>
+            <div class="popup-detail">
+                <span class="popup-label">Slot:</span>
+                <span class="popup-value" id="detailsSlot"></span>
+            </div>
+            <div class="popup-detail">
+                <span class="popup-label">Description:</span>
+                <span class="popup-value" id="detailsDescription"></span>
+            </div>
+        </div>
+        <div class="popup-buttons">
+            <button class="popup-btn ok" id="detailsOk">OK</button>
+        </div>
+    </div>
+</div>
+  <div id="messageModal" class="messmodal">
+  <div class="messmodal-content">
+    <p id="messageText">This is a message.</p>
+    <button id="messageOk">OK</button>
+  </div>
+</div>
+    <script>
+         let currentSelectedLocation = null;
+        let currentSelectedSlot = null;
+        let instructorName = "Unknown";
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const particlesArray = [];
+        class Particle {
+            constructor() {
+             this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.size = Math.random() * 2 + 1;
+            this.speedX = Math.random() * 0.5 - 0.25;
+            this.speedY = Math.random() * 0.5 - 0.25;
+            this.opacity = Math.random() * 0.5 + 0.2;
+        }
+        update() {
+            this.x += this.speedX;
+            this.y += this.speedY;
+            if (this.x > canvas.width) this.x = 0;
+            else if (this.x < 0) this.x = canvas.width;
+            if (this.y > canvas.height) this.y = 0;
+            else if (this.y < 0) this.y = canvas.height;
+        }
+        draw() {
+            ctx.fillStyle = document.body.classList.contains('light-mode') ? `rgba(255, 117, 140, ${this.opacity})` : `rgba(107, 52, 245, ${this.opacity})`;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        }
+        for (let i = 0; i < 100; i++) {
+        particlesArray.push(new Particle());
+        }
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particlesArray.forEach(particle => {
+            particle.update();
+            particle.draw();
+        });
+        requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+        window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        });
+        const modeToggle = document.getElementById('mode-toggle');
+        modeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('light-mode');
+        localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
+        modeToggle.querySelector('.slider').textContent = document.body.classList.contains('light-mode') ? '☀️' : '🌙';
+        });
+        window.addEventListener('DOMContentLoaded', () => {
+        if (localStorage.getItem('theme') === 'light') {
+        document.body.classList.add('light-mode');
+        modeToggle.querySelector('.slider').textContent = '☀️';
+        } else {
+            modeToggle.querySelector('.slider').textContent = '🌙';
+        }
+    });
+        document.addEventListener("DOMContentLoaded", function() {
+        let dropdown = document.querySelector(".dropdown");
+        let dropdownMenu = dropdown.querySelector("ul");
+        let timeout;
+
+    dropdown.addEventListener("mouseenter", function() {
+        clearTimeout(timeout);
+        dropdownMenu.style.display = "block";
+    });
+
+    dropdown.addEventListener("mouseleave", function() {
+        timeout = setTimeout(() => {
+            dropdownMenu.style.display = "none";
+        }, 200); // Adjust delay time if needed
+    });
+
+    dropdownMenu.addEventListener("mouseenter", function() {
+        clearTimeout(timeout);
+    });
+
+    dropdownMenu.addEventListener("mouseleave", function() {
+        timeout = setTimeout(() => {
+            dropdownMenu.style.display = "none";
+        }, 200);
+    });
+});
+         // Set the default date constraints and value
+            const datePicker = document.getElementById("datePicker");
+            const today = new Date().toISOString().split("T")[0];
+
+            datePicker.min = today; // Prevent selecting past dates
+            datePicker.value = today; // Default to today
+
+            // Function to get selected date
+            function getSelectedDate() {
+                return datePicker.value || today;
+        }
+        const logoutBtn = document.getElementById('logout-btn');
+logoutBtn.addEventListener('click', () => {
+    // Clear cookies
+    document.cookie = 'userName=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    document.cookie = 'userEmail=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    localStorage.removeItem('email');
+    localStorage.removeItem('userEmail');
+    history.replaceState(null, null, "/");
+    // Redirect to LoginPage
+    window.location.href = '/';
+     });
+        function updateDate() {
+            const today = new Date();
+            const formattedDate = today.toISOString().split("T")[0]; // YYYY-MM-DD format
+            document.getElementById("dateDisplay").textContent = `Today's Date: ${today.toDateString()}`;
+            return formattedDate;
+        }
+
+        async function fetchLocations() {
+            try {
+                const response = await fetch("http://localhost:3000/get-locations");
+                const data = await response.json();
+
+                const locations = data.locations;
+                const floors = data.floors;
+
+                const groundContainer = document.getElementById("groundContainer");
+                const firstContainer = document.getElementById("firstContainer");
+                const secondContainer = document.getElementById("secondContainer");
+                const thirdContainer = document.getElementById("thirdContainer");
+
+                groundContainer.querySelectorAll(".location-item").forEach(item => item.remove());
+                firstContainer.querySelectorAll(".location-item").forEach(item => item.remove());
+                secondContainer.querySelectorAll(".location-item").forEach(item => item.remove());
+                thirdContainer.querySelectorAll(".location-item").forEach(item => item.remove());
+
+                locations.forEach((location, index) => {
+                    const floor = floors[index];
+                    const locationDiv = document.createElement("div");
+                    locationDiv.className = "location-item";
+                    locationDiv.textContent = location;
+
+                    if (floor === "Ground") {
+                        groundContainer.appendChild(locationDiv);
+                    } else if (floor === "First") {
+                        firstContainer.appendChild(locationDiv);
+                    } else if (floor === "Second") {
+                        secondContainer.appendChild(locationDiv);
+                    }
+                    else if(floor=="Third"){
+                        thirdContainer.appendChild(locationDiv);
+
+                    }
+                });
+            } catch (error) {
+                console.error("Error fetching locations:", error);
+            }
+        }
+
+        function createCards() {
+            const timeSlots = {
+                "1": "8:00 AM - 8:50 AM",
+                "2": "8:50 AM - 9:40 AM",
+                "3": "9:40 AM - 10:30 AM",
+                "4": "10:45 AM - 11:35 AM",
+                "5": "11:35 AM - 12:25 PM",
+                "6": "12:25 PM - 1:15 PM",
+                "7": "1:15 PM - 2:05 PM",
+                "8": "2:05 PM - 2:55 PM",
+                "9": "2:55 PM - 3:45 PM",
+                "10": "3:45 PM - 4:35 PM",
+                "11": "4:35 PM - 5:25 PM",
+                "12": "5:25 PM - 6:15 PM"
+            };
+
+            const cardContainer = document.getElementById("cardContainer");
+
+            for (let i = 1; i <= 12; i++) {
+                const card = document.createElement("div");
+                card.className = "card";
+                card.setAttribute("data-slot", i); // Store slot number
+
+                const cardTitle = document.createElement("div");
+                cardTitle.className = "card-title";
+                cardTitle.textContent = `Slot ${i}`;
+
+                const slotDiv = document.createElement("div");
+                slotDiv.className = "slot";
+                slotDiv.innerHTML = `<strong>Slot: ${i}</strong><br>${timeSlots[i]}`;
+                slotDiv.style.textAlign = "center";
+
+                card.appendChild(slotDiv);
+                card.addEventListener("click", () => fetchAvailableLocations(i)); // Attach event listener
+                cardContainer.appendChild(card);
+            }
+        }
+// Add these helper functions
+function handleAvailableClick() {
+    currentSelectedLocation = this.textContent;
+    showBookingPopup();
+}
+
+function handleUnavailableClick(e) {
+    e.stopPropagation();
+    showBookingDetails(this.textContent);
+}
+        async function fetchAvailableLocations(slot) {
+            currentSelectedSlot = slot; // Store the selected slot
+                const date = getSelectedDate(); // Use selected date from date picker
+
+                try {
+                    // Fetch both API responses
+                    const [response1, response2] = await Promise.all([
+                        fetch(`http://localhost:3000/get-available-locations?date=${date}&slot=${slot}`).then(res => res.json()),
+                        fetch(`http://localhost:3000/get-locations-by-date-slot?date=${date}&slot=${slot}`).then(res => res.json())
+                    ]);
+
+                    // Extract available locations from both responses
+                    const availableLocations = response1.availableLocations || [];
+                    const unavailableLocations = response2 || []; // Directly an array
+
+                    // First, highlight available locations (green)
+                    highlightAvailableLocations(availableLocations);
+
+                    // Then, highlight unavailable locations (red) (overrides green if needed)
+                    highlightUnavailableLocations(unavailableLocations);
+
+                } catch (error) {
+                    console.error("Error fetching available locations:", error);
+                }
+            }
+
+
+        // Function to fetch instructor name
+        async function fetchInstructorName() {
+            try {
+                const userEmail = localStorage.getItem("email");
+                if (!userEmail) {
+                    console.error("No email found in localStorage");
+                    return;
+                }
+
+                const response = await fetch(`http://localhost:3000/get-user?email=${encodeURIComponent(userEmail)}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                
+                if (data && data.name) {
+                    instructorName = data.name;
+                } else if (data && data.username) {
+                    instructorName = data.username;
+                } else {
+                    console.error("User name not found in response");
+                    instructorName = "Unknown";
+                }
+            } catch (error) {
+                console.error("Error fetching user name:", error);
+                instructorName = "Error";
+            }
+        }
+async function showBookingDetails(location) {
+    const date = getSelectedDate();
+    const slot = currentSelectedSlot;
+    
+    try {
+        const response = await fetch(`http://localhost:3000/get-booking-details?date=${date}&slot=${slot}&location=${encodeURIComponent(location)}`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const bookingDetails = await response.json();
+        
+        if (bookingDetails) {
+            // Format the date for display (YYYY-MM-DD)
+            const displayDate = bookingDetails.date.split('T')[0];
+            
+            // Update popup content
+            document.getElementById("detailsInstructor").textContent = bookingDetails.instructor || "N/A";
+            document.getElementById("detailsLocation").textContent = bookingDetails.location;
+            document.getElementById("detailsDate").textContent = displayDate;
+            document.getElementById("detailsSlot").textContent = slot;
+            document.getElementById("detailsDescription").textContent = bookingDetails.description || "No description provided";
+            
+            // Show the popup
+            document.getElementById("bookingDetailsPopup").classList.add("active");
+        } else {
+            showMessage("No booking details found for this location");
+        }
+    } catch (error) {
+        console.error("Error fetching booking details:", error);
+        showMessage("Could not fetch booking details");
+    }
+}
+
+// Function to hide booking details popup
+function hideBookingDetailsPopup() {
+    document.getElementById("bookingDetailsPopup").classList.remove("active");
+}
+
+        function highlightAvailableLocations(availableLocations) {
+    document.querySelectorAll(".location-item").forEach(item => {
+        item.style.cursor = "pointer";
+        if (availableLocations.includes(item.textContent)) {
+            // Available location (green)
+            item.style.backgroundColor = "rgba(0,255,0,0.5)";
+            item.style.color = "white";
+            item.onclick = function() {
+                currentSelectedLocation = item.textContent;
+                showBookingPopup();
+            };
+        } else {
+            // Unavailable location (red) - show details when clicked
+            item.style.backgroundColor = "rgba(255, 0, 0, 1)";
+            item.style.color = "white";
+            item.onclick = function() {
+                showBookingDetails(item.textContent);
+            };
+        }
+    });
+}
+
+        // Function to show booking popup
+        function showBookingPopup() {
+            const popup = document.getElementById("bookingPopup");
+            const date = getSelectedDate();
+            const day = new Date(date).toLocaleDateString('en-US', { weekday: 'long' });
+            
+            // Get slot time mapping
+            const slotTimes = {
+                "1": "8:00 AM - 8:50 AM",
+                "2": "8:50 AM - 9:40 AM",
+                "3": "9:40 AM - 10:30 AM",
+                "4": "10:45 AM - 11:35 AM",
+                "5": "11:35 AM - 12:25 PM",
+                "6": "12:25 PM - 1:15 PM",
+                "7": "1:15 PM - 2:05 PM",
+                "8": "2:05 PM - 2:55 PM",
+                "9": "2:55 PM - 3:45 PM",
+                "10": "3:45 PM - 4:35 PM",
+                "11": "4:35 PM - 5:25 PM",
+                "12": "5:25 PM - 6:15 PM"
+            };
+            
+            // Set popup values
+            document.getElementById("popupLocation").textContent = currentSelectedLocation;
+            document.getElementById("popupDate").textContent = date;
+            document.getElementById("popupDay").textContent = day;
+            document.getElementById("popupSlot").textContent = currentSelectedSlot;
+            document.getElementById("popupTime").textContent = slotTimes[currentSelectedSlot];
+            document.getElementById("popupDescription").value = "";
+            
+            // Show popup
+            popup.classList.add("active");
+        }
+ // Function to handle booking
+        async function handleBooking() {
+            const date = getSelectedDate();
+            const day = new Date(date).toLocaleDateString('en-US', { weekday: 'long' });
+            const description = document.getElementById("popupDescription").value;
+            
+            const slotTimes = {
+                "1": "8:00 AM - 8:50 AM",
+                "2": "8:50 AM - 9:40 AM",
+                "3": "9:40 AM - 10:30 AM",
+                "4": "10:45 AM - 11:35 AM",
+                "5": "11:35 AM - 12:25 PM",
+                "6": "12:25 PM - 1:15 PM",
+                "7": "1:15 PM - 2:05 PM",
+                "8": "2:05 PM - 2:55 PM",
+                "9": "2:55 PM - 3:45 PM",
+                "10": "3:45 PM - 4:35 PM",
+                "11": "4:35 PM - 5:25 PM",
+                "12": "5:25 PM - 6:15 PM"
+            };
+
+            const data = {
+                instructor: instructorName,
+                location: currentSelectedLocation,
+                date: date,
+                day: day,
+                slots: [{
+                    slot: currentSelectedSlot,
+                    time: slotTimes[currentSelectedSlot],
+                    status: "temporary"
+                }],
+                description: description
+            };
+
+            try {
+                const response = await fetch("http://localhost:3000/add-classbookerease", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    showMessage("Booking successful!");
+                    hideBookingPopup();
+                    // Refresh available locations to reflect the new booking
+                    fetchAvailableLocations(currentSelectedSlot);
+                } else {
+                    throw new Error("Booking failed");
+                }
+            } catch (error) {
+                console.error("Error booking location:", error);
+                showMessage("Booking failed. Please try again.");
+            }
+        }
+        // Function to hide booking popup
+        function hideBookingPopup() {
+            document.getElementById("bookingPopup").classList.remove("active");
+        }
+    // Function to highlight unavailable locations (red)
+       
+        createCards();
+        fetchLocations();
+        gsap.from('.navbar', { duration: 1, y: -50, opacity: 0, ease: 'power3.out' });
+        gsap.from('h1', { duration: 1, opacity: 0, y: 50, ease: 'power3.out', delay: 0.2 });
+        gsap.from('.form-container', { duration: 1, opacity: 0, scale: 0.9, ease: 'power3.out', delay: 0.4 });
+        function toggleMenu() {
+      const navLinks = document.querySelector('.nav-links');
+      navLinks.classList.toggle('active');
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+    const dropdowns = document.querySelectorAll('.dropdown');
+
+    dropdowns.forEach(dropdown => {
+      const button = dropdown.querySelector('.dropbtn');
+
+      button.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        // Close other dropdowns
+        dropdowns.forEach(d => {
+          if (d !== dropdown) d.classList.remove('show');
+        });
+
+        // Toggle current dropdown
+        dropdown.classList.toggle('show');
+      });
+    });
+        // Fetch instructor name when page loads
+        document.addEventListener("DOMContentLoaded", fetchInstructorName);
+    // Close all dropdowns on outside click
+    document.addEventListener('click', function (e) {
+      dropdowns.forEach(dropdown => {
+        if (!dropdown.contains(e.target)) {
+          dropdown.classList.remove('show');
+        }
+      });
+    });
+  });
+  // Set up popup button listeners
+document.getElementById("popupCancel").addEventListener("click", hideBookingPopup);
+document.getElementById("popupBook").addEventListener("click", handleBooking);
+
+// Add event listener for OK button
+document.getElementById("detailsOk").addEventListener("click", hideBookingDetailsPopup);
+// Fetch instructor name when page loads
+fetchInstructorName();
+  function showMessage(msg) {
+  document.getElementById("messageText").textContent = msg;
+  const modal = document.getElementById("messageModal");
+  modal.style.display = "block";
+
+  document.getElementById("messageOk").onclick = function () {
+    modal.style.display = "none";
+  };
+}
+    </script>
+
+
+</body>
+
+</html>

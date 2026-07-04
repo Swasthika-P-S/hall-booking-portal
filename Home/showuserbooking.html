@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <title>User Booking Management</title>
+    <script>
+        if (!localStorage.getItem("email")) {
+            window.location.href = "/";
+        }  
+    </script>
+    <style>
+        :root {
+      --bg-color: #0A0A0F;
+      --text-color: #E0E0E0;
+      --card-bg: rgba(20, 20, 30, 0.9);
+      --nav-bg: rgba(10, 10, 15, 0.9);
+      --input-bg: rgba(40, 40, 50, 0.8);
+      --gradient: linear-gradient(135deg, #6F42C1 , #BB86FC);
+      --gradient1: linear-gradient(235deg, #6F42C1 , #BB86FC);
+      --shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      --border: rgba(107, 52, 245, 0.2);
+}
+.light-mode {
+            --bg-color: #F5F6FA;
+            --text-color: #333;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --nav-bg: rgba(245, 246, 250, 0.9);
+            --input-bg: rgba(240, 240, 245, 0.8);
+            --table-cell-bg: rgba(230, 230, 235, 0.8);
+            --gradient: linear-gradient(135deg, #FFA07A , #FF69B4);
+            --gradient1: linear-gradient(235deg, #FFA07A , #FF69B4);
+            --gradient-start: #FF758C;
+            --gradient-end: #FCD968;
+            --shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            --border: rgba(0, 0, 0, 0.2);
+            --accent-color: #FF758C;
+        }
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: var(--bg-color);
+      color: var(--text-color);
+      overflow-x: hidden;
+      position: relative;
+      transition: background 0.3s, color 0.3s;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    #particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--nav-bg);
+      padding: 20px 40px;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      backdrop-filter: blur(10px);
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+    .nav-links {
+      list-style: none;
+      display: flex;
+      align-items: center;
+    }
+    .nav-links li {
+      margin: 0 20px;
+    }
+    .nav-links a {
+      color: var(--text-color);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 16px;
+      transition: color 0.3s, transform 0.3s;
+    }
+    .nav-links a:hover {
+      color: #6B34F5;
+      transform: translateY(-2px);
+    }
+    .hamburger {
+      display: none;
+      font-size: 28px;
+      color: var(--text-color);
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        background: var(--nav-bg);
+        position: absolute;
+        top: 80px;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        padding: 20px 0;
+        transition: background 0.3s;
+      }
+      .nav-links.active {
+        display: flex;
+      }
+      .hamburger {
+        display: block;
+      }
+      .nav-links li{
+        margin-bottom: 10px;
+      }
+    }
+    #logo {
+      height: 60px;
+      filter: brightness(1.2);
+    }
+    #logout-btn {
+      background: var(--gradient);
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+      box-shadow: 0 4px 15px rgba(107, 52, 245, 0.4);
+    }
+    #logout-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(107, 52, 245, 0.6);
+    }
+    #logout-btn:active {
+      background: #4a20b3;
+      transform: scale(0.98);
+    }
+    .mode-toggle {
+      position: relative;
+      width: 60px;
+      height: 30px;
+      background: var(--gradient);
+      border-radius: 25px;
+      cursor: pointer;
+      overflow: hidden;
+    }
+    .slider {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 26px;
+      height: 26px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .light-mode .slider {
+      transform: translateX(30px);
+    }        
+    .container {
+            max-width: 90%;
+            margin: 0 auto;
+            padding: 40px 5%;
+        }
+
+        .actions {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            margin-bottom: 40px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            transition: transform 0.3s ease;
+        }
+
+        .actions:hover {
+            transform: translateY(-5px);
+        }
+
+        .actions input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+            font-size: 16px;
+            outline: none;
+            transition: border 0.3s;
+        }
+
+        .actions input:focus {
+            border-color: #900246;
+        }
+
+        .actions button {
+            background: var(--gradient);
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            font-weight: 600;
+        }
+
+        .actions button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(144, 2, 70, 0.4);
+        }
+
+        .table-container {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease;
+        }
+
+        .table-container:hover {
+            transform: translateY(-5px);
+        }
+
+        .table-container h2 {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 16px;
+        }
+
+        table th, table td {
+            padding: 15px 20px;
+            text-align: left;
+            border: 1px solid var(--border);
+        }
+
+        table th {
+            background: var(--gradient);
+            color: #fff;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+
+        tbody tr:hover {
+            background: rgba(144, 2, 70, 0.1);
+        }
+
+        .action-btn {
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 0 5px;
+            color: #fff;
+            transition: transform 0.3s;
+            font-weight: 600;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .action-btn.approve {
+            background: linear-gradient(135deg, #28a745, #1d7a33);
+        }
+
+        .action-btn.decline {
+            background: linear-gradient(135deg, #dc3545, #a71d2a);
+        }
+
+        .status-pending {
+            color: #ff9800;
+            font-weight: bold;
+        }
+
+        .status-approved {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .status-declined {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .modaldelete, .modalapprove {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modaldelete-content, .modalapprove-content {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            color: var(--text-color);
+        }
+
+        .modaldelete-content p, .modalapprove-content p {
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .modaldelete-content button, .modalapprove-content button {
+            background: var(--gradient);
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            font-weight: 600;
+            margin: 0 10px;
+        }
+
+        .modaldelete-content button:last-child, .modalapprove-content button:last-child {
+            background: linear-gradient(135deg, #dc3545, #a71d2a);
+        }
+
+        .modaldelete-content button:hover, .modalapprove-content button:hover {
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .actions {
+                flex-direction: column;
+            }
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+        }
+        nav ul li .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    left: 0;
+    top: 100%;
+    margin-top: 10px;
+}
+nav ul li {
+    position: relative;
+}
+
+        nav ul li .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+        }
+        nav ul li .dropdown-content a:hover {
+            background-color: #ddd;
+        }
+        nav ul li:hover .dropdown-content {
+            display: block;
+        }
+        nav ul li.show .dropdown-content {
+  display: block;
+}
+h1 {
+      text-align: center;
+      color: var(--text-color);
+      font-size: 36px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      transition: color 0.3s;
+      margin-top: 80px;
+    }
+    </style>
+</head>
+<body>
+    <canvas id="particles"></canvas>
+    <nav class="navbar">
+      <img src="/images/logo.png" id="logo">
+      <ul class="nav-links">
+        <li class="dropdown">
+          <a href="#" class="dropbtn">Teacher Availability</a>
+          <div class="dropdown-content">
+              <a href="/ccm">CCM Scheduler</a>
+              <a href="/gds">GDS Scheduler</a>
+              <a href="/ftm">FTM</a>
+          </div>
+      </li>
+        <li class="dropdown">
+            <a href="#" class="dropbtn">Classroom</a>
+            <div class="dropdown-content">
+                <a href="/bookclass">Book Class</a>
+                <a href="/displayclass">Check Availability</a>
+                <a href="/locations">Manage Classrooms</a>
+            </div>
+        </li>
+        <li class="dropdown">
+            <a href="#" class="dropbtn">Hall</a>
+            <div class="dropdown-content">
+                <a href="/booking">Book Hall</a>
+                <a href="/forall">Check Availability</a>
+                <a href="/showuserbooking">Authorize Bookings</a>
+                <a href="/viewbooking">Check Bookings</a>
+            </div>
+        </li>
+        <li class="dropdown">
+            <a href="/homepage">Home</a>
+        </li>
+        <li><button id="logout-btn">Logout</button></li>
+        <li><div class="mode-toggle" id="mode-toggle"><div class="slider">🌙</div></div></li>
+      </ul>
+      <div class="hamburger" onclick="toggleMenu()">☰</div>
+    </nav> 
+    <h1>Manage Bookings</h1>
+
+    <div class="container">
+        <div class="actions">
+            <input type="text" id="search-input" placeholder="Search by venue...">
+            <button onclick="searchBookings()">Search Bookings</button>
+        </div>
+
+        <div class="table-container">
+            <h2 style="text-align: center;text-transform: uppercase;">All Bookings</h2>
+            <table id="bookings-table">
+                <thead>
+                    <tr>
+                        <th>Venue</th>
+                        <th>Date</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Message</th>
+                        <th>Booked By</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="bookings-tbody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="delete-confirmation-modal" class="modaldelete">
+        <div class="modaldelete-content">
+            <p>Are you sure you want to decline this booking?</p>
+            <button onclick="confirmDelete()">Yes, Decline</button>
+            <button onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
+
+    <div id="approve-confirmation-modal" class="modalapprove">
+        <div class="modalapprove-content">
+            <p>Are you sure you want to approve this booking?</p>
+            <button onclick="confirmApprove()">Yes, Approve</button>
+            <button onclick="closeApproveModal()">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        // Particles Animation
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const particlesArray = [];
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 1;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.speedY = Math.random() * 0.5 - 0.25;
+                this.opacity = Math.random() * 0.5 + 0.2;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x > canvas.width) this.x = 0;
+                else if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                else if (this.y < 0) this.y = canvas.height;
+            }
+            draw() {
+                ctx.fillStyle = document.body.classList.contains('light-mode') 
+                    ? `rgba(255, 117, 140, ${this.opacity})` 
+                    : `rgba(144, 2, 70, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        for (let i = 0; i < 100; i++) particlesArray.push(new Particle());
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particlesArray.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+        let currentBookingId = null;
+
+        function toggleMenu() {
+            window.location.href = '/viewbooking';
+        }
+
+        function fetchBookings() {
+            fetch('/api/userbooking/all')
+                .then(response => response.text().then(text => text ? JSON.parse(text) : { bookings: [] }))
+                .then(data => displayBookings(data.bookings || data.userbookings || []))
+                .catch(error => {
+                    console.error('Error fetching bookings:', error);
+                    document.getElementById('bookings-tbody').innerHTML = 
+                        `<tr><td colspan="8" style="text-align: center; color: #dc3545;">Error loading bookings: ${error.message}</td></tr>`;
+                });
+        }
+
+        function searchBookings() {
+            const searchTerm = document.getElementById('search-input').value.trim();
+            if (!searchTerm) {
+                fetchBookings();
+                return;
+            }
+            fetch(`/api/userbooking/search?q=${encodeURIComponent(searchTerm)}`)
+                .then(response => response.ok ? response.json() : Promise.reject(new Error('Failed to search bookings')))
+                .then(data => displayBookings(data.bookings))
+                .catch(error => {
+                    console.error('Error searching bookings:', error);
+                    alert('Error searching bookings: ' + error.message);
+                });
+        }
+
+        function displayBookings(bookings) {
+            const tableBody = document.getElementById('bookings-tbody');
+            tableBody.innerHTML = '';
+            if (!bookings || !Array.isArray(bookings) || bookings.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="8">No bookings found</td></tr>';
+                return;
+            }
+            const sortedBookings = [...bookings].sort((a, b) => {
+                const dateA = new Date(a.date);
+                const dateB = new Date(b.date);
+                if (dateA.getTime() !== dateB.getTime()) return dateA - dateB;
+                return a.startTime.localeCompare(b.startTime);
+            });
+            sortedBookings.forEach(booking => {
+                const bookingDate = new Date(booking.date).toLocaleDateString();
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${booking.venue || 'N/A'}</td>
+                    <td>${bookingDate}</td>
+                    <td>${booking.startTime || 'N/A'}</td>
+                    <td>${booking.endTime || 'N/A'}</td>
+                    <td>${booking.message || 'No message'}</td>
+                    <td>${booking.userEmail || 'N/A'}</td>
+                    <td><span class="status-${booking.status || 'pending'}">${(booking.status || 'pending').charAt(0).toUpperCase() + (booking.status || 'pending').slice(1)}</span></td>
+                    <td>
+                        <button class="action-btn approve" data-id="${booking._id}" style="margin-bottom:10px;">Approve</button>
+                        <button class="action-btn decline" data-id="${booking._id}">Decline</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+            document.querySelectorAll('.action-btn.approve').forEach(button => {
+                button.addEventListener('click', function() {
+                    showApproveModal(this.getAttribute('data-id'));
+                });
+            });
+            document.querySelectorAll('.action-btn.decline').forEach(button => {
+                button.addEventListener('click', function() {
+                    showDeleteModal(this.getAttribute('data-id'));
+                });
+            });
+        }
+
+        function showApproveModal(bookingId) {
+            currentBookingId = bookingId;
+            document.getElementById('approve-confirmation-modal').style.display = 'flex';
+        }
+
+        function closeApproveModal() {
+            document.getElementById('approve-confirmation-modal').style.display = 'none';
+        }
+
+function confirmApprove() {
+    if (!currentBookingId) {
+        alert("Invalid booking ID");
+        return;
+    }
+    
+    fetch(`/api/userbooking/approve/${currentBookingId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' }
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(data => {
+                throw new Error(data.error || `Server error: ${response.status}`);
+            });
+        }
+        return response.json();
+    })
+    .then((data) => {
+        console.log("Booking approved successfully:", data);
+        closeApproveModal();
+        fetchBookings(); // This should refresh the page/data
+    })
+    .catch(error => {
+        console.error("Error approving booking:", error);
+        alert("Error: " + error.message);
+        closeApproveModal();
+    });
+}
+        function showDeleteModal(bookingId) {
+            currentBookingId = bookingId;
+            document.getElementById('delete-confirmation-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('delete-confirmation-modal').style.display = 'none';
+        }
+
+        function confirmDelete() {
+            if (!currentBookingId) {
+                alert("Invalid booking ID");
+                return;
+            }
+            fetch(`/api/userbooking/${currentBookingId}`, { method: 'DELETE' })
+            .then(response => response.ok ? response.json() : response.json().then(data => Promise.reject(new Error(data.error || "Unknown error"))))
+            .then(() => {
+                closeModal();
+                fetchBookings();
+            })
+            .catch(error => {
+                console.error("Error declining booking:", error);
+                alert("Error: " + error.message);
+                closeModal();
+            });
+        }
+
+        document.getElementById("search-input").addEventListener("input", function() {
+            if (this.value.trim() === '') fetchBookings();
+        });
+
+        document.addEventListener('DOMContentLoaded', fetchBookings);
+        gsap.from('.navbar', { duration: 1, y: -50, opacity: 0, ease: 'power3.out' });
+        gsap.from('h1', { duration: 1, opacity: 0, y: 50, ease: 'power3.out', delay: 0.2 });
+        gsap.from('.form-container', { duration: 1, opacity: 0, scale: 0.9, ease: 'power3.out', delay: 0.4 });
+        function toggleMenu() {
+      const navLinks = document.querySelector('.nav-links');
+      navLinks.classList.toggle('active');
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+    const dropdowns = document.querySelectorAll('.dropdown');
+
+    dropdowns.forEach(dropdown => {
+      const button = dropdown.querySelector('.dropbtn');
+
+      button.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        // Close other dropdowns
+        dropdowns.forEach(d => {
+          if (d !== dropdown) d.classList.remove('show');
+        });
+
+        // Toggle current dropdown
+        dropdown.classList.toggle('show');
+      });
+    });
+
+    // Close all dropdowns on outside click
+    document.addEventListener('click', function (e) {
+      dropdowns.forEach(dropdown => {
+        if (!dropdown.contains(e.target)) {
+          dropdown.classList.remove('show');
+        }
+      });
+    });
+  });
+  const modeToggle = document.getElementById('mode-toggle');
+        modeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('light-mode');
+        localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
+        modeToggle.querySelector('.slider').textContent = document.body.classList.contains('light-mode') ? '☀️' : '🌙';
+        });
+        window.addEventListener('DOMContentLoaded', () => {
+        if (localStorage.getItem('theme') === 'light') {
+        document.body.classList.add('light-mode');
+        modeToggle.querySelector('.slider').textContent = '☀️';
+        } else {
+            modeToggle.querySelector('.slider').textContent = '🌙';
+        }
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=account_circle" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script>
+        if (!localStorage.getItem("email")) {
+        window.location.href = "/";
+        }  
+      </script>
+    <style>
+        :root {
+      --bg-color: #0A0A0F;
+      --text-color: #E0E0E0;
+      --card-bg: rgba(20, 20, 30, 0.9);
+      --nav-bg: rgba(10, 10, 15, 0.9);
+      --input-bg: rgba(40, 40, 50, 0.8);
+      --gradient: linear-gradient(135deg, #6F42C1 , #BB86FC);
+      --gradient1: linear-gradient(235deg, #6F42C1 , #BB86FC);
+      --shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      --border: rgba(107, 52, 245, 0.2);
+}
+.light-mode {
+            --bg-color: #F5F6FA;
+            --text-color: #333;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --nav-bg: rgba(245, 246, 250, 0.9);
+            --input-bg: rgba(240, 240, 245, 0.8);
+            --table-cell-bg: rgba(230, 230, 235, 0.8);
+            --gradient: linear-gradient(135deg, #FFA07A , #FF69B4);
+            --gradient1: linear-gradient(235deg, #FFA07A , #FF69B4);
+            --gradient-start: #FF758C;
+            --gradient-end: #FCD968;
+            --shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            --border: rgba(0, 0, 0, 0.2);
+            --accent-color: #FF758C;
+        }
+body {
+font-family: 'Inter', sans-serif;
+margin: 0;
+padding: 0;
+background: var(--bg-color);
+color: var(--text-color);
+overflow-x: hidden;
+position: relative;
+transition: background 0.3s, color 0.3s;
+}
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+#particles {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+pointer-events: none;
+z-index: -1;
+}
+.navbar {
+display: flex;
+justify-content: space-between;
+align-items: center;
+background: var(--nav-bg);
+padding: 20px 40px;
+box-shadow: var(--shadow);
+position: sticky;
+top: 0;
+z-index: 1000;
+backdrop-filter: blur(10px);
+transition: background 0.3s, box-shadow 0.3s;
+}
+.nav-links {
+list-style: none;
+display: flex;
+align-items: center;
+}
+.nav-links li {
+margin: 0 20px;
+}
+.nav-links a {
+color: var(--text-color);
+text-decoration: none;
+font-weight: 600;
+font-size: 16px;
+transition: color 0.3s, transform 0.3s;
+}
+.nav-links a:hover {
+color: #6B34F5;
+transform: translateY(-2px);
+}
+.hamburger {
+display: none;
+font-size: 28px;
+color: var(--text-color);
+cursor: pointer;
+transition: color 0.3s;
+}
+@media (max-width: 768px) {
+.nav-links {
+ display: none;
+ flex-direction: column;
+ background: var(--nav-bg);
+ position: absolute;
+ top: 80px;
+ left: 0;
+ width: 100%;
+ text-align: center;
+ padding: 20px 0;
+ transition: background 0.3s;
+}
+.nav-links.active {
+ display: flex;
+}
+.hamburger {
+ display: block;
+}
+.nav-links li{
+ margin-bottom: 10px;
+}
+}
+#logo {
+height: 60px;
+filter: brightness(1.2);
+}
+#logout-btn {
+background: var(--gradient);
+color: #fff;
+border: none;
+padding: 12px 24px;
+font-size: 14px;
+font-weight: 600;
+border-radius: 25px;
+cursor: pointer;
+transition: transform 0.3s, box-shadow 0.3s;
+box-shadow: 0 4px 15px rgba(107, 52, 245, 0.4);
+}
+#logout-btn:hover {
+transform: scale(1.05);
+box-shadow: 0 6px 20px rgba(107, 52, 245, 0.6);
+}
+#logout-btn:active {
+background: #4a20b3;
+transform: scale(0.98);
+}
+nav ul li .dropdown-content {
+display: none;
+position: absolute;
+background-color: #f9f9f9;
+min-width: 160px;
+box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+z-index: 1;
+left: 0;
+top: 100%;
+margin-top: 10px;
+}
+nav ul li {
+position: relative;
+}
+
+ nav ul li .dropdown-content a {
+     color: black;
+     padding: 12px 16px;
+     text-decoration: none;
+     display: block;
+     text-align: left;
+ }
+ nav ul li .dropdown-content a:hover {
+     background-color: #ddd;
+ }
+ nav ul li:hover .dropdown-content {
+     display: block;
+ }
+ nav ul li.show .dropdown-content {
+display: block;
+}
+        .container {
+            padding: 40px;
+
+        }
+        .actions {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        .actions input {
+            padding: 12px;
+            width: 300px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--input-bg);
+            color: var(--text-color);
+            transition: border-color 0.3s;
+        }
+        .actions input:focus {
+            border-color: #900246;
+            box-shadow: 0 0 5px rgba(144, 2, 70, 0.5);
+            outline: none;
+        }
+        .actions button {
+            background: var(--gradient);
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 15px rgba(144, 2, 70, 0.4);
+        }
+        .actions button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(144, 2, 70, 0.6);
+        }
+        .table-container {
+            background: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            overflow-x: auto;
+        }
+        .table-container h2 {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card-bg);
+        }
+        th, td {
+            padding: 16px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        th {
+            background: var(--gradient);
+            color: #fff;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+        tbody tr:hover {
+            background: rgba(144, 2, 70, 0.1);
+            transition: 0.3s;
+        }
+        .modal, .modaldelete {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content, .modaldelete-content {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            width: 90%;
+            max-width: 450px;
+            backdrop-filter: blur(10px);
+        }
+        .modal-content h2, .modaldelete-content p {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            text-align: center;
+        }
+        .form-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        .modal-content label {
+            font-weight: 600;
+            width: 30%;
+            text-align: right;
+            padding-right: 10px;
+        }
+        .modal-content input, .modal-content select {
+            width: 65%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--input-bg);
+            color: var(--text-color);
+            transition: border-color 0.3s;
+        }
+        .modal-content input:focus, .modal-content select:focus {
+            border-color: #900246;
+            box-shadow: 0 0 5px rgba(144, 2, 70, 0.5);
+            outline: none;
+        }
+        .modal-buttons, .modaldelete-content button {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .modal-content button, .modaldelete-content button {
+            background: var(--gradient);
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin: 5px;
+        }
+        .modal-content button:last-child, .modaldelete-content button:last-child {
+            background: linear-gradient(135deg, #dc3545, #a71d2a);
+        }
+        .modal-content button:hover, .modaldelete-content button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(144, 2, 70, 0.4);
+        }
+        #error-message {
+            color: #dc3545;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .mode-toggle {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: var(--gradient);
+            border-radius: 25px;
+            cursor: pointer;
+        }
+        .slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 26px;
+            height: 26px;
+            background: #fff;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        .light-mode .slider {
+            transform: translateX(30px);
+        }
+        @media (max-width: 600px) {
+     th, td {
+        padding: 10px;
+        font-size: 14px;
+      }
+} 
+@media (max-width: 768px) {
+  th, td {
+        padding: 10px;
+        font-size: 14px;
+      }
+} 
+    </style>
+</head>
+<body>
+    <canvas id="particles"></canvas>
+    <nav class="navbar">
+      <img src="/images/logo.png" id="logo">
+      <ul class="nav-links">
+        <li class="dropdown">
+          <a href="#" class="dropbtn">Teacher Availability</a>
+          <div class="dropdown-content">
+              <a href="/ccm">CCM Scheduler</a>
+              <a href="/gds">GDS Scheduler</a>
+              <a href="/ftm">FTM</a>
+          </div>
+      </li>
+        <li class="dropdown">
+            <a href="#" class="dropbtn">Classroom</a>
+            <div class="dropdown-content">
+                <a href="/bookclass">Book Class</a>
+                <a href="/displayclass">Check Availability</a>
+                <a href="/locations">Manage Classrooms</a>
+            </div>
+        </li>
+        <li class="dropdown">
+            <a href="#" class="dropbtn">Hall</a>
+            <div class="dropdown-content">
+                <a href="/booking">Book Hall</a>
+                <a href="/forall">Check Availability</a>
+                <a href="/showuserbooking">Authorize Bookings</a>
+                <a href="/viewbooking">Check Bookings</a>
+            </div>
+        </li>
+        <li class="dropdown">
+            <a href="/homepage">Home</a>
+        </li>
+        <li><button id="logout-btn">Logout</button></li>
+        <li><div class="mode-toggle" id="mode-toggle"><div class="slider">🌙</div></div></li>
+      </ul>
+      <div class="hamburger" onclick="toggleMenu()">☰</div>
+    </nav> 
+    <div class="container">
+        <div class="actions">
+            <input type="text" id="searchbyhall" placeholder="Search by hall, time, or date">
+            <button onclick="searchhall()">Search</button>
+            <button id="add-booking-btn" onclick="toggleForm()">Add Booking</button>
+            <button id="show-user-booking" onclick="approvebooking()">User Booking</button>
+        </div>
+        <div class="table-container">
+            <h2 style="text-align: center;">All Bookings</h2>
+            <table id="bookings-table">
+                <thead>
+                    <tr>
+                        <th>Venue</th>
+                        <th>Date</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Message</th>
+                        <th>Booked By</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+    <div id="booking-modal" class="modal">
+        <div class="modal-content">
+            <h2>Add Booking</h2>
+            <div class="form-group">
+                <label for="venue">Venue:</label>
+                <select id="venue">
+                    <option value="">Select Venue</option>
+                    <option value="Seminar Hall 1">Seminar Hall 1</option>
+                    <option value="Seminar Hall 2">Seminar Hall 2</option>
+                    <option value="Anugraha Hall">Anugraha Hall</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="date">Date:</label>
+                <input type="date" id="date" required>
+            </div>
+            <div class="form-group">
+                <label for="start-time">Start Time:</label>
+                <input type="time" id="start-time" required>
+            </div>
+            <div class="form-group">
+                <label for="end-time">End Time:</label>
+                <input type="time" id="end-time" required>
+            </div>
+            <div class="form-group">
+                <label for="message">Message:</label>
+                <input type="text" id="message" placeholder="Enter message" required>
+            </div>
+            <div class="form-group">
+                <label for="user-email">User Email:</label>
+                <input type="email" id="user-email" placeholder="Enter email" required>
+            </div>
+            <p id="error-message" style="display: none;"></p>
+            <div class="modal-buttons">
+                <button onclick="saveBooking()">Save</button>
+                <button onclick="closeModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <div id="delete-confirmation-modal" class="modaldelete">
+        <div class="modaldelete-content">
+            <p>Are you sure you want to delete this booking?</p>
+            <button onclick="confirmDelete()">Yes, Delete</button>
+            <button onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        // Particles Animation
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const particlesArray = [];
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 1;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.speedY = Math.random() * 0.5 - 0.25;
+                this.opacity = Math.random() * 0.5 + 0.2;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x > canvas.width) this.x = 0;
+                else if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                else if (this.y < 0) this.y = canvas.height;
+            }
+            draw() {
+                ctx.fillStyle = document.body.classList.contains('light-mode') 
+                    ? `rgba(255, 117, 140, ${this.opacity})` 
+                    : `rgba(144, 2, 70, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        for (let i = 0; i < 100; i++) particlesArray.push(new Particle());
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particlesArray.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Mode Toggle
+        const modeToggle = document.getElementById('mode-toggle');
+        const slider = modeToggle.querySelector('.slider');
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        if (savedTheme === 'light') {
+            document.body.classList.add('light-mode');
+            slider.textContent = '☀️';
+        }
+        modeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+            slider.textContent = isLight ? '☀️' : '🌙';
+        });
+        // Logout
+        function logout() {
+            localStorage.clear();
+            sessionStorage.clear();
+            document.cookie.split(";").forEach(cookie => {
+                const [name] = cookie.split("=");
+                document.cookie = `${name.trim()}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+            });
+            window.location.href = "/";
+        }
+        document.getElementById('logout-btn').addEventListener('click', logout);
+
+        // Navigation
+        document.getElementById('show-user-booking').addEventListener('click', e => {
+            e.preventDefault();
+            window.location.href = '/showuserbooking';
+        });
+
+        // GSAP Animations
+        gsap.from('nav', { duration: 1, y: -50, opacity: 0, ease: 'power3.out' });
+        gsap.from('.actions', { duration: 1, opacity: 0, y: 50, ease: 'power3.out', delay: 0.2 });
+        gsap.from('.table-container', { duration: 1, opacity: 0, y: 50, ease: 'power3.out', delay: 0.4 });
+
+        // Booking Logic
+        let editingBookingId = null;
+        let bookingToDelete = null;
+
+        function toggleForm() {
+            document.getElementById("booking-modal").style.display = "flex";
+            editingBookingId = null;
+            document.getElementById("venue").value = "";
+            document.getElementById("date").value = "";
+            document.getElementById("start-time").value = "";
+            document.getElementById("end-time").value = "";
+            document.getElementById("message").value = "";
+            document.getElementById("user-email").value = "";
+        }
+
+        function closeModal() {
+            document.getElementById("booking-modal").style.display = "none";
+            document.getElementById("delete-confirmation-modal").style.display = "none";
+        }
+
+        function validateDate(date) {
+            const today = new Date().toISOString().split("T")[0];
+            return date >= today;
+        }
+
+        function populateTable(bookings) {
+            const tableBody = document.querySelector("#bookings-table tbody");
+            tableBody.innerHTML = "";
+            if (bookings.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center;">No bookings found</td></tr>`;
+                tableBody.appendChild(row);
+                return;
+            }
+            bookings.forEach(booking => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${booking.venue}</td>
+                    <td>${booking.date}</td>
+                    <td>${booking.startTime}</td>
+                    <td>${booking.endTime}</td>
+                    <td>${booking.message}</td>
+                    <td>${booking.userEmail}</td>
+                    <td><div class="action-icons">
+                        <button onclick='editBooking(${JSON.stringify(booking)})'style=" background: var(--gradient);border: none; padding: 8px 16px; border-radius: 20px; color: #fff; cursor: pointer; transition: transform 0.3s;margin-bottom:4px;">Edit</button>
+                        <button class="edit-btn" onclick="deleteBooking('${booking._id}')" style="background: linear-gradient(135deg, #dc3545, #a71d2a); border: none; padding: 8px 16px; border-radius: 20px; color: #fff; cursor: pointer; transition: transform 0.3s;">Delete</button>
+                    </div></td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function saveBooking() {
+            const venue = document.getElementById("venue").value.trim();
+            const date = document.getElementById("date").value;
+            const startTime = document.getElementById("start-time").value;
+            const endTime = document.getElementById("end-time").value;
+            const message = document.getElementById("message").value.trim();
+            const userEmail = document.getElementById("user-email").value.trim();
+            const errorMessage = document.getElementById("error-message");
+
+            errorMessage.style.display = "none";
+
+            if (!venue || !date || !startTime || !endTime || !message || !userEmail) {
+                errorMessage.textContent = "All fields are required";
+                errorMessage.style.display = "block";
+                return;
+            }
+
+            if (!validateDate(date)) {
+                errorMessage.textContent = "Date must be today or a future date";
+                errorMessage.style.display = "block";
+                return;
+            }
+
+            if (startTime >= endTime) {
+                errorMessage.textContent = "Start time must be before end time";
+                errorMessage.style.display = "block";
+                return;
+            }
+
+            const wordCount = message.split(/\s+/).length;
+            if (wordCount <= 1) {
+                errorMessage.textContent = "Message must be at least 2 words long";
+                errorMessage.style.display = "block";
+                return;
+            }
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(userEmail)) {
+                errorMessage.textContent = "Enter a valid email address";
+                errorMessage.style.display = "block";
+                return;
+            }
+
+            const booking = { venue, date, startTime, endTime, message, userEmail };
+
+            fetch(editingBookingId ? `/api/bookings/${editingBookingId}` : "/api/bookings", {
+                method: editingBookingId ? "PUT" : "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(booking),
+            })
+            .then(async response => {
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    errorMessage.textContent = "Failed to save booking. Conflict: This slot is already booked!";
+                    errorMessage.style.display = "block";
+                    throw new Error(errorData.error);
+                }
+                return response.json();
+            })
+            .then(() => {
+                fetchBookings();
+                closeModal();
+            })
+            .catch(error => alert("Error saving booking: " + error.message));
+        }
+
+        function deleteBooking(id) {
+            bookingToDelete = id;
+            document.getElementById("delete-confirmation-modal").style.display = "flex";
+        }
+
+        function confirmDelete() {
+            if (!bookingToDelete) {
+                alert("No booking ID found for deletion");
+                return;
+            }
+            fetch(`/api/bookings/${bookingToDelete}`, { method: "DELETE" })
+                .then(response => {
+                    if (!response.ok) throw new Error("Failed to delete booking");
+                    return response.json();
+                })
+                .then(() => {
+                    fetchBookings();
+                    closeModal();
+                })
+                .catch(error => alert("Error deleting booking: " + error.message));
+        }
+
+        function editBooking(booking) {
+            editingBookingId = booking._id;
+            document.getElementById("venue").value = booking.venue;
+            document.getElementById("date").value = booking.date;
+            document.getElementById("start-time").value = booking.startTime;
+            document.getElementById("end-time").value = booking.endTime;
+            document.getElementById("message").value = booking.message;
+            document.getElementById("user-email").value = booking.userEmail;
+            document.getElementById("booking-modal").style.display = "flex";
+        }
+
+        function fetchBookings(searchQuery = "") {
+            let url = "/api/bookings/all";
+            if (searchQuery.trim() !== "") {
+                url = `/api/bookings?venue=${encodeURIComponent(searchQuery)}`;
+            }
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.bookings && data.bookings.length > 0) {
+                        populateTable(data.bookings);
+                    } else {
+                        populateTable([]); 
+                    }
+                })
+                .catch(error => {
+                    alert("Failed to fetch bookings: " + error.message);
+                });
+            }
+
+        function searchhall() {
+            const searchQuery = document.getElementById("searchbyhall").value.trim().toLowerCase();
+            fetch("/api/bookings/all")
+                .then(response => response.json())
+                .then(data => {
+                    if (data.bookings && data.bookings.length > 0) {
+                        const filteredBookings = data.bookings.filter(booking => 
+                            booking.venue.toLowerCase().includes(searchQuery) ||
+                            booking.startTime.toLowerCase().includes(searchQuery) ||
+                            booking.endTime.toLowerCase().includes(searchQuery) ||
+                            booking.date.toLowerCase().includes(searchQuery) ||
+                            booking.message.toLowerCase().includes(searchQuery) ||
+                            booking.userEmail.toLowerCase().includes(searchQuery)
+                        );
+                        populateTable(filteredBookings);
+                    } else {
+                        populateTable([]); 
+                    }
+                })
+                .catch(error => {
+                    alert("Failed to fetch bookings: " + error.message);
+                });
+        }
+
+        document.getElementById("searchbyhall").addEventListener("input", searchhall);
+        document.addEventListener("DOMContentLoaded", () => {
+            fetchBookings();
+        });
+        function toggleMenu() {
+      const navLinks = document.querySelector('.nav-links');
+      navLinks.classList.toggle('active');
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+    const dropdowns = document.querySelectorAll('.dropdown');
+
+    dropdowns.forEach(dropdown => {
+      const button = dropdown.querySelector('.dropbtn');
+
+      button.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        // Close other dropdowns
+        dropdowns.forEach(d => {
+          if (d !== dropdown) d.classList.remove('show');
+        });
+
+        // Toggle current dropdown
+        dropdown.classList.toggle('show');
+      });
+    });
+
+    // Close all dropdowns on outside click
+    document.addEventListener('click', function (e) {
+      dropdowns.forEach(dropdown => {
+        if (!dropdown.contains(e.target)) {
+          dropdown.classList.remove('show');
+        }
+      });
+    });
+  });
+
+    </script>
+</body>
+</html>

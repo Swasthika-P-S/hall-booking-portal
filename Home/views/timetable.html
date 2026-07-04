@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timetable Upload and Download</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    
+    <script>
+        // Check authentication without localStorage
+        function checkAuth() {
+            // Use cookies or session storage alternative
+            const cookies = document.cookie.split(';');
+            let emailFound = false;
+            
+            for (let cookie of cookies) {
+                if (cookie.trim().startsWith('userEmail=')) {
+                    emailFound = true;
+                    break;
+                }
+            }
+            
+            if (!emailFound) {
+                window.location.href = "/";
+            }
+        }
+        
+        // Call auth check on page load
+        window.addEventListener('DOMContentLoaded', checkAuth);
+    </script>
+    
+    <style>
+        :root {
+            --bg-color: #0A0A0F;
+            --text-color: #E0E0E0;
+            --card-bg: rgba(20, 20, 30, 0.9);
+            --nav-bg: rgba(10, 10, 15, 0.9);
+            --input-bg: rgba(40, 40, 50, 0.8);
+            --gradient: linear-gradient(135deg, #6F42C1, #BB86FC);
+            --gradient1: linear-gradient(235deg, #6F42C1, #BB86FC);
+            --shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            --border: rgba(107, 52, 245, 0.2);
+        }
+
+        .light-mode {
+            --bg-color: #F5F6FA;
+            --text-color: #333;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --nav-bg: rgba(245, 246, 250, 0.9);
+            --input-bg: rgba(240, 240, 245, 0.8);
+            --table-cell-bg: rgba(230, 230, 235, 0.8);
+            --gradient: linear-gradient(135deg, #FFA07A, #FF69B4);
+            --gradient1: linear-gradient(235deg, #FFA07A, #FF69B4);
+            --gradient-start: #FF758C;
+            --gradient-end: #FCD968;
+            --shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            --border: rgba(0, 0, 0, 0.2);
+            --accent-color: #FF758C;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            position: relative;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        #particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--nav-bg);
+            padding: 20px 40px;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            transition: background 0.3s, box-shadow 0.3s;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-links li {
+            margin: 0 20px;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: color 0.3s, transform 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #6B34F5;
+            transform: translateY(-2px);
+        }
+
+        .hamburger {
+            display: none;
+            font-size: 28px;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                background: var(--nav-bg);
+                position: absolute;
+                top: 80px;
+                left: 0;
+                width: 100%;
+                text-align: center;
+                padding: 20px 0;
+                transition: background 0.3s;
+            }
+            .nav-links.active {
+                display: flex;
+            }
+            .hamburger {
+                display: block;
+            }
+            .nav-links li {
+                margin-bottom: 10px;
+            }
+        }
+
+        #logo {
+            height: 60px;
+            filter: brightness(1.2);
+        }
+
+        #logout-btn {
+            background: var(--gradient);
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 15px rgba(107, 52, 245, 0.4);
+        }
+
+        #logout-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(107, 52, 245, 0.6);
+        }
+
+        #logout-btn:active {
+            background: #4a20b3;
+            transform: scale(0.98);
+        }
+
+        h1 {
+            text-align: center;
+            margin: 60px 0 40px;
+            color: var(--text-color);
+            font-size: 36px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: color 0.3s;
+        }
+
+        .mode-toggle {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: var(--gradient);
+            border-radius: 25px;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 26px;
+            height: 26px;
+            background: #fff;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .light-mode .slider {
+            transform: translateX(30px);
+        }
+
+        nav ul li .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: var(--card-bg);
+            min-width: 160px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            left: 0;
+            top: 100%;
+            margin-top: 10px;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+
+        nav ul li {
+            position: relative;
+        }
+
+        nav ul li .dropdown-content a {
+            color: var(--text-color);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+            transition: background 0.3s;
+        }
+
+        nav ul li .dropdown-content a:hover {
+            background-color: rgba(107, 52, 245, 0.1);
+        }
+
+        nav ul li:hover .dropdown-content {
+            display: block;
+        }
+
+        nav ul li.show .dropdown-content {
+            display: block;
+        }
+
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            max-width: 600px;
+            margin: 0 auto 40px;
+            border: 1px solid var(--border);
+            transition: background 0.3s, box-shadow 0.3s, border 0.3s;
+        }
+
+        .form-container label {
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 16px;
+            margin-top: 15px;
+            display: block;
+            text-align: left;
+            width: 100%;
+            transition: color 0.3s;
+        }
+
+        .form-container select,
+        .form-container input[type="file"] {
+            padding: 12px;
+            margin-top: 8px;
+            margin-bottom: 20px;
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            width: 100%;
+            text-align: center;
+            font-size: 14px;
+            cursor: pointer;
+            background: var(--input-bg);
+            color: var(--text-color);
+            transition: border-color 0.3s, background 0.3s, color 0.3s;
+        }
+
+        .form-container select:focus,
+        .form-container input[type="file"]:focus {
+            border-color: #6B34F5;
+            box-shadow: 0 0 5px rgba(107, 52, 245, 0.5);
+            outline: none;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .form-container button {
+            padding: 12px 18px;
+            background: var(--gradient);
+            color: #fff;
+            border: none;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            flex: 1;
+            min-width: 150px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 15px rgba(107, 52, 245, 0.4);
+        }
+
+        .form-container button:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(107, 52, 245, 0.6);
+        }
+
+        .form-container button:active {
+            transform: scale(0.98);
+            background: #4a20b3;
+        }
+
+        .form-container button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        #loader {
+            margin-top: 15px;
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 15px 20px;
+            }
+            
+            .form-container {
+                width: 90%;
+                padding: 20px;
+            }
+            
+            button {
+                font-size: 13px;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .form-container button {
+                min-width: unset;
+            }
+        }
+
+        #messageModal {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.6);
+        }
+
+        .messmodal-content {
+            background-color: var(--card-bg);
+            margin: 25% auto;
+            padding: 20px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+            color: var(--text-color);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+        }
+
+        #messageOk {
+            background: var(--gradient);
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            font-weight: 600;
+            margin: 0 10px;
+            margin-top: 10px;
+        }
+
+        #messageOk:hover {
+            transform: scale(1.05);
+        }
+
+        .info-box {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            margin-top: 20px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            border: 1px solid var(--border);
+        }
+
+        .info-box h3 {
+            margin-bottom: 15px;
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        .info-box ul {
+            padding-left: 20px;
+        }
+
+        .info-box li {
+            margin-bottom: 8px;
+            color: var(--text-color);
+        }
+
+        .template-link {
+            display: inline-block;
+            margin-top: 10px;
+            color: #BB86FC;
+            text-decoration: underline;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .template-link:hover {
+            color: #6F42C1;
+        }
+
+        .light-mode .template-link {
+            color: #FF69B4;
+        }
+
+        .light-mode .template-link:hover {
+            color: #FFA07A;
+        }
+
+        @media (max-width: 600px) {
+            .messmodal-content {
+                margin-top: 80px;
+            }
+        }
+  
+        @media (max-width: 768px) {
+            .messmodal-content {
+                margin-top: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="particles"></canvas>
+    <nav class="navbar">
+        <img src="/images/logo.png" id="logo" alt="Logo">
+        <ul class="nav-links">
+            <li class="dropdown">
+                <a href="#" class="dropbtn">Teacher Availability</a>
+                <div class="dropdown-content">
+                    <a href="/ccm">CCM Scheduler</a>
+                    <a href="/gds">GDS Scheduler</a>
+                    <a href="/ftm">FTM</a>
+                </div>
+            </li>
+            <li class="dropdown">
+                <a href="#" class="dropbtn">Classroom</a>
+                <div class="dropdown-content">
+                    <a href="/bookclass">Book Class</a>
+                    <a href="/displayclass">Check Availability</a>
+                    <a href="/locations">Manage Classrooms</a>
+                </div>
+            </li>
+            <li class="dropdown">
+                <a href="#" class="dropbtn">Hall</a>
+                <div class="dropdown-content">
+                    <a href="/booking">Book Hall</a>
+                    <a href="/forall">Check Availability</a>
+                    <a href="/showuserbooking">Authorize Bookings</a>
+                    <a href="/viewbooking">Check Bookings</a>
+                </div>
+            </li>
+            <li><a href="/homepage">Home</a></li>
+            <li><button id="logout-btn">Logout</button></li>
+            <li><div class="mode-toggle" id="mode-toggle"><div class="slider">🌙</div></div></li>
+        </ul>
+        <div class="hamburger" onclick="toggleMenu()">☰</div>
+    </nav> 
+    
+    <h1>Upload Timetable</h1>      
+    
+    <div class="form-container">
+        <form id="uploadForm" enctype="multipart/form-data">
+            <label for="year">Select Year:</label>
+            <select id="year" name="year" required>
+                <option value="">-- Select Year --</option>
+                <option value="2024-2025">2024-2025</option>
+                <option value="2023-2024">2023-2024</option>
+                <option value="2022-2023">2022-2023</option>
+                <option value="2021-2022">2021-2022</option>
+            </select>
+            
+            <label for="semester">Select Semester:</label>
+            <select id="semester" name="semester" required>
+                <option value="">-- Select Semester --</option>
+                <option value="1">Semester 1</option>
+                <option value="2">Semester 2</option>
+                <option value="3">Semester 3</option>
+                <option value="4">Semester 4</option>
+                <option value="5">Semester 5</option>
+                <option value="6">Semester 6</option>
+                <option value="7">Semester 7</option>
+                <option value="8">Semester 8</option>
+            </select>
+            
+            <label for="timetableFile">Upload Timetable Excel File:</label>
+            <input type="file" id="timetableFile" name="timetableFile" accept=".xlsx,.xls" required>
+            
+            <div class="button-group">
+                <button type="submit" id="submitBtn">Upload Timetable</button>
+            </div>
+            <div id="loader" style="display: none;">Processing...</div>
+        </form>
+    </div>
+
+    <div id="messageModal" class="messmodal">
+        <div class="messmodal-content">
+            <p id="messageText">This is a message.</p>
+            <button id="messageOk">OK</button>
+        </div>
+    </div>
+    <script>
+        // Auth check
+function checkAuth() {
+    const cookies = document.cookie.split(';');
+    let emailFound = false;
+    for (let cookie of cookies) {
+        if (cookie.trim().startsWith('userEmail=')) {
+            emailFound = true;
+            break;
+        }
+    }
+    if (!emailFound) {
+        window.location.href = "/";
+    }
+}
+window.addEventListener('DOMContentLoaded', checkAuth);
+
+// Particles animation
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+const particlesArray = [];
+
+class Particle {
+    constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 2 + 1;
+        this.speedX = Math.random() * 0.5 - 0.25;
+        this.speedY = Math.random() * 0.5 - 0.25;
+        this.opacity = Math.random() * 0.5 + 0.2;
+    }
+    update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x > canvas.width) this.x = 0;
+        else if (this.x < 0) this.x = canvas.width;
+        if (this.y > canvas.height) this.y = 0;
+        else if (this.y < 0) this.y = canvas.height;
+    }
+    draw() {
+        ctx.fillStyle = document.body.classList.contains('light-mode') 
+            ? `rgba(255, 117, 140, ${this.opacity})` 
+            : `rgba(107, 52, 245, ${this.opacity})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+for (let i = 0; i < 100; i++) {
+    particlesArray.push(new Particle());
+}
+
+function animateParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particlesArray.forEach(particle => {
+        particle.update();
+        particle.draw();
+    });
+    requestAnimationFrame(animateParticles);
+}
+
+animateParticles();
+
+window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+});
+
+// Mode toggle
+const modeToggle = document.getElementById('mode-toggle');
+modeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('light-mode');
+    modeToggle.querySelector('.slider').textContent = document.body.classList.contains('light-mode') ? '☀️' : '🌙';
+});
+
+// Menu toggle
+function toggleMenu() {
+    const navLinks = document.querySelector('.nav-links');
+    navLinks.classList.toggle('active');
+}
+
+// Dropdowns
+document.addEventListener('DOMContentLoaded', function () {
+    const dropdowns = document.querySelectorAll('.dropdown');
+    dropdowns.forEach(dropdown => {
+        const button = dropdown.querySelector('.dropbtn');
+        button.addEventListener('click', function (e) {
+            e.preventDefault();
+            dropdowns.forEach(d => {
+                if (d !== dropdown) d.classList.remove('show');
+            });
+            dropdown.classList.toggle('show');
+        });
+    });
+    document.addEventListener('click', function (e) {
+        dropdowns.forEach(dropdown => {
+            if (!dropdown.contains(e.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+    });
+});
+
+// Logout
+document.getElementById('logout-btn').addEventListener('click', () => {
+    document.cookie = 'userName=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    document.cookie = 'userEmail=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    history.replaceState(null, null, "/");
+    window.location.href = '/';
+});
+
+// Message Modal
+function showMessage(msg) {
+    document.getElementById("messageText").textContent = msg;
+    const modal = document.getElementById("messageModal");
+    modal.style.display = "block";
+    document.getElementById("messageOk").onclick = function () {
+        modal.style.display = "none";
+    };
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    };
+}
+
+// Upload timetable
+document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fileInput = document.getElementById('timetableFile');
+    const year = document.getElementById('year').value;
+    const semester = document.getElementById('semester').value;
+    const submitBtn = document.getElementById('submitBtn');
+    const loader = document.getElementById('loader');
+    
+    if (!year) {
+        showMessage('Please select a year.');
+        return;
+    }
+    if (!semester) {
+        showMessage('Please select a semester.');
+        return;
+    }
+    if (!fileInput.files.length) {
+        showMessage('Please select an Excel file to upload.');
+        return;
+    }
+    
+    // Validate file type
+    const file = fileInput.files[0];
+    const allowedTypes = [
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/vnd.ms-excel',
+        '.xlsx',
+        '.xls'
+    ];
+    
+    if (!file.name.toLowerCase().endsWith('.xlsx') && !file.name.toLowerCase().endsWith('.xls')) {
+        showMessage('Please upload a valid Excel file (.xlsx or .xls).');
+        return;
+    }
+    
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Uploading...';
+    loader.style.display = 'inline';
+    
+    const formData = new FormData();
+    formData.append('timetableFile', file);
+    formData.append('year', year);
+    formData.append('semester', semester);
+    
+    try {
+        const response = await fetch('/upload-timetable', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+            let successMsg = result.message;
+            if (result.details) {
+                successMsg += `\n\nDetails:`;
+                if (result.details.addedCount !== undefined) {
+                    successMsg += `\nNew entries added: ${result.details.addedCount}`;
+                }
+                if (result.details.updatedCount !== undefined) {
+                    successMsg += `\nExisting entries updated: ${result.details.updatedCount}`;
+                }
+                if (result.details.errors && result.details.errors.length > 0) {
+                    successMsg += `\n\nWarnings:`;
+                    result.details.errors.forEach((err, index) => {
+                        successMsg += `\n${index + 1}. ${err}`;
+                    });
+                }
+            }
+            showMessage(successMsg);
+            // Only reset form on successful upload
+            document.getElementById('uploadForm').reset();
+        } else {
+            let errorMsg = result.message || 'Upload failed';
+            if (result.errors && result.errors.length > 0) {
+                errorMsg += '\n\nErrors found:';
+                result.errors.forEach((err, index) => {
+                    errorMsg += `\n${index + 1}. ${err}`;
+                });
+            }
+            showMessage(errorMsg);
+        }
+    } catch (error) {
+        console.error('Upload error:', error);
+        showMessage('Error uploading file. Please check your connection and try again.');
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Upload Timetable';
+        loader.style.display = 'none';
+    }
+});
+
+// Download timetable
+document.getElementById('downloadBtn').addEventListener('click', async () => {
+    const year = document.getElementById('year').value;
+    const semester = document.getElementById('semester').value;
+    
+    if (!year || !semester) {
+        showMessage('Please select both year and semester to download timetable.');
+        return;
+    }
+    
+    // Show loading state
+    const downloadBtn = document.getElementById('downloadBtn');
+    const originalText = downloadBtn.textContent;
+    downloadBtn.disabled = true;
+    downloadBtn.textContent = 'Downloading...';
+    
+    try {
+        const response = await fetch(`/download-timetable?year=${encodeURIComponent(year)}&semester=${encodeURIComponent(semester)}`);
+        
+        if (response.ok) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `timetable_${year}_sem${semester}.xlsx`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            showMessage('Timetable downloaded successfully!');
+        } else {
+            const error = await response.json();
+            showMessage(error.message || 'Error downloading timetable. Please try again.');
+        }
+    } catch (error) {
+        console.error('Download error:', error);
+        showMessage('Error downloading timetable. Please check your connection and try again.');
+    } finally {
+        downloadBtn.disabled = false;
+        downloadBtn.textContent = originalText;
+    }
+});
+
+// Additional utility functions
+function validateExcelFile(file) {
+    const validExtensions = ['.xlsx', '.xls'];
+    const fileName = file.name.toLowerCase();
+    return validExtensions.some(ext => fileName.endsWith(ext));
+}
+
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+// File input change handler for better UX
+document.getElementById('timetableFile').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        if (!validateExcelFile(file)) {
+            showMessage('Please select a valid Excel file (.xlsx or .xls).');
+            e.target.value = '';
+            return;
+        }
+        
+        // Show file info
+        const fileSize = formatFileSize(file.size);
+        console.log(`Selected file: ${file.name} (${fileSize})`);
+        
+        // Optional: Show file preview or validation
+        if (file.size > 10 * 1024 * 1024) { // 10MB limit
+            showMessage('File size is too large. Please select a file smaller than 10MB.');
+            e.target.value = '';
+            return;
+        }
+    }
+});
+    </script>
+</body>
+
+</html>

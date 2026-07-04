@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Excel Upload</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=account_circle" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+    :root {
+      --bg-color: #0A0A0F;
+      --text-color: #E0E0E0;
+      --card-bg: rgba(20, 20, 30, 0.9);
+      --nav-bg: rgba(10, 10, 15, 0.9);
+      --gradient: linear-gradient(135deg, #6F42C1, #BB86FC);
+      --shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      --border: rgba(107, 52, 245, 0.2);
+      --success-color: #28a745;
+      --error-color: #dc3545;
+      --warning-color: #ffc107;
+    }
+
+    .light-mode {
+      --bg-color: #F5F6FA;
+      --text-color: #333;
+      --card-bg: rgba(255, 255, 255, 0.9);
+      --nav-bg: rgba(245, 246, 250, 0.9);
+      --gradient: linear-gradient(135deg, #FFA07A, #FF69B4);
+      --shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      --border: rgba(0, 0, 0, 0.2);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--nav-bg);
+      padding: 20px 40px;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      backdrop-filter: blur(10px);
+    }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .nav-links a {
+      color: var(--text-color);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 16px;
+      transition: color 0.3s, transform 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: #6B34F5;
+      transform: translateY(-2px);
+    }
+
+    #logout-btn {
+      background: var(--gradient);
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+      box-shadow: 0 4px 15px rgba(107, 52, 245, 0.4);
+    }
+
+    #logout-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(107, 52, 245, 0.6);
+    }
+
+    .mode-toggle {
+      position: relative;
+      width: 60px;
+      height: 30px;
+      background: var(--gradient);
+      border-radius: 25px;
+      cursor: pointer;
+    }
+
+    .slider {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 26px;
+      height: 26px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .light-mode .slider {
+      transform: translateX(30px);
+    }
+
+    /* Main Content - Centered Layout */
+    .main-content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      min-height: calc(100vh - 100px);
+    }
+
+    .upload-container {
+      max-width: 600px;
+      width: 100%;
+      text-align: center;
+    }
+
+    h1 {
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 700;
+      font-size: 2.5rem;
+      margin-bottom: 40px;
+    }
+
+    .upload-card {
+      background: var(--card-bg);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      margin-bottom: 30px;
+      transition: transform 0.3s ease;
+    }
+
+    .upload-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .file-drop-zone {
+      border: 2px dashed var(--border);
+      border-radius: 15px;
+      padding: 60px 30px;
+      text-align: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      margin-bottom: 30px;
+    }
+
+    .file-drop-zone:hover,
+    .file-drop-zone.dragover {
+      border-color: #6F42C1;
+      background: rgba(111, 66, 193, 0.1);
+      transform: scale(1.02);
+    }
+
+    .upload-icon {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      opacity: 0.7;
+      transition: transform 0.3s ease;
+      color: #6F42C1;
+    }
+
+    .file-drop-zone:hover .upload-icon {
+      transform: scale(1.1);
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .upload-text {
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .upload-subtext {
+      font-size: 1rem;
+      opacity: 0.7;
+      line-height: 1.6;
+    }
+
+    .file-info {
+      background: rgba(111, 66, 193, 0.1);
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+      display: none;
+      border-left: 4px solid #6F42C1;
+    }
+
+    .file-info h4 {
+      margin-bottom: 15px;
+      color: var(--text-color);
+      font-size: 1.1rem;
+    }
+
+    .file-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+      font-size: 0.95rem;
+    }
+
+    .progress-container {
+      display: none;
+      margin: 20px 0;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 5px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--gradient);
+      width: 0%;
+      transition: width 0.3s ease;
+      position: relative;
+    }
+
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      background-image: linear-gradient(
+        -45deg,
+        rgba(255, 255, 255, .2) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(255, 255, 255, .2) 50%,
+        rgba(255, 255, 255, .2) 75%,
+        transparent 75%,
+        transparent
+      );
+      background-size: 50px 50px;
+      animation: move 2s linear infinite;
+    }
+
+    @keyframes move {
+      0% { background-position: 0 0; }
+      100% { background-position: 50px 50px; }
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      background: var(--gradient);
+      color: #fff;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(111, 66, 193, 0.4);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 140px;
+      justify-content: center;
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(111, 66, 193, 0.6);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #6c757d, #495057);
+      box-shadow: 0 4px 15px rgba(108, 117, 125, 0.4);
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      box-shadow: 0 6px 20px rgba(108, 117, 125, 0.6);
+    }
+
+    .btn-download {
+      background: linear-gradient(135deg, #28a745, #20c997);
+      box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+    }
+
+    .btn-download:hover {
+      box-shadow: 0 6px 20px rgba(40, 167, 69, 0.6);
+    }
+
+    #message {
+      margin: 30px 0;
+      padding: 20px;
+      border-radius: 10px;
+      font-weight: 500;
+      display: none;
+      animation: slideIn 0.3s ease;
+      white-space: pre-line;
+      max-width: 100%;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    #message.success {
+      background: rgba(40, 167, 69, 0.1);
+      color: var(--success-color);
+      border: 1px solid rgba(40, 167, 69, 0.3);
+    }
+
+    #message.error {
+      background: rgba(220, 53, 69, 0.1);
+      color: var(--error-color);
+      border: 1px solid rgba(220, 53, 69, 0.3);
+    }
+
+    .instructions {
+      background: var(--card-bg);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      text-align: left;
+    }
+
+    .instructions h3 {
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 600;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .instructions ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .instructions li {
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      padding-left: 30px;
+    }
+
+    .instructions li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--success-color);
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+
+    .instructions li:last-child {
+      border-bottom: none;
+    }
+
+    .download-section {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 15px 20px;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+
+      .nav-links {
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 30px;
+      }
+
+      .upload-card {
+        padding: 30px 20px;
+        margin: 0 10px 20px;
+      }
+
+      .file-drop-zone {
+        padding: 40px 20px;
+      }
+
+      .upload-icon {
+        font-size: 3rem;
+      }
+
+      .upload-text {
+        font-size: 1.1rem;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .btn {
+        width: 100%;
+        max-width: 300px;
+      }
+
+      .instructions {
+        margin: 0 10px;
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div style="display: flex; align-items: center;">
+      <img src="/images/logo.png" style="height: 50px;" alt="Logo">
+    </div>
+    <ul class="nav-links">
+      <li><a href="/homepage">Home</a></li>
+      <li><button id="logout-btn">Logout</button></li>
+      <li><div class="mode-toggle" id="mode-toggle"><div class="slider">🌙</div></div></li>
+    </ul>
+  </nav> 
+  
+  <div class="main-content">
+    <div class="upload-container">
+      <h1><i class="fas fa-users"></i> User Excel Upload</h1>
+      
+      <div class="instructions">
+        <h3><i class="fas fa-info-circle"></i> Upload Instructions</h3>
+        <ul>
+          <li>Excel file must contain columns: <strong>username, password, name, email</strong></li>
+          <li>Username should be unique and contain only letters, numbers, and underscores</li>
+          <li>Password must be at least 6 characters long</li>
+        </ul>
+        
+        <div class="download-section">
+          <!-- <a href="/download-user-template" class="btn btn-download">
+            <i class="fas fa-download"></i> Download Template  ->> function to be added in js if needed
+          </a> -->
+          <a href="/download-users-excel" class="btn btn-secondary">
+            <i class="fas fa-file-export"></i> Export Users
+          </a>
+        </div>
+      </div>
+
+      <div class="upload-card">
+        <form id="uploadForm" enctype="multipart/form-data">
+          <div class="file-drop-zone" id="dropZone">
+            <div class="upload-icon">
+              <i class="fas fa-cloud-upload-alt"></i>
+            </div>
+            <div class="upload-text">Drop your Excel file here</div>
+            <div class="upload-subtext">
+              or click to browse<br>
+              <small>Supports .xlsx and .xls files (max 10MB)</small>
+            </div>
+            <input type="file" id="excelFile" name="excelFile" accept=".xlsx,.xls" class="file-input">
+          </div>
+          
+          <div class="file-info" id="fileInfo">
+            <h4><i class="fas fa-file-excel"></i> Selected File:</h4>
+            <div class="file-details" id="fileDetails"></div>
+          </div>
+          
+          <div class="progress-container" id="progressContainer">
+            <div class="progress-bar">
+              <div class="progress-fill" id="progressFill"></div>
+            </div>
+          </div>
+          
+          <div class="action-buttons">
+            <button type="submit" class="btn" id="uploadBtn" disabled>
+              <i class="fas fa-upload"></i> Upload Users
+            </button>
+            <button type="button" class="btn btn-secondary" id="clearBtn" disabled>
+              <i class="fas fa-times"></i> Clear Selection
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div id="message"></div>
+    </div>
+  </div>
+
+  <script>
+    let currentTheme = 'dark';
+
+    // Mode Toggle
+    const modeToggle = document.getElementById('mode-toggle');
+    const slider = modeToggle.querySelector('.slider');
+    
+    modeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('light-mode');
+      const isLight = document.body.classList.contains('light-mode');
+      currentTheme = isLight ? 'light' : 'dark';
+      slider.textContent = isLight ? '☀️' : '🌙';
+    });
+
+    // File handling
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('excelFile');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const fileInfo = document.getElementById('fileInfo');
+    const fileDetails = document.getElementById('fileDetails');
+    const messageElement = document.getElementById('message');
+    const progressContainer = document.getElementById('progressContainer');
+    const progressFill = document.getElementById('progressFill');
+
+    // Click to select file
+    dropZone.addEventListener('click', () => fileInput.click());
+
+    // Drag and drop
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('dragover');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.classList.remove('dragover');
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        fileInput.files = files;
+        handleFileSelect();
+      }
+    });
+
+    fileInput.addEventListener('change', handleFileSelect);
+
+    function handleFileSelect() {
+      const file = fileInput.files[0];
+      if (file) {
+        displayFileInfo(file);
+        uploadBtn.disabled = false;
+        clearBtn.disabled = false;
+      }
+    }
+
+    function displayFileInfo(file) {
+      const fileName = file.name;
+      const fileSize = (file.size / 1024 / 1024).toFixed(2);
+      const fileType = file.type || 'Unknown';
+      
+      fileDetails.innerHTML = `
+        <div><strong>Name:</strong> ${fileName}</div>
+        <div><strong>Size:</strong> ${fileSize} MB</div>
+        <div><strong>Type:</strong> ${fileType}</div>
+        <div><strong>Last Modified:</strong> ${new Date(file.lastModified).toLocaleDateString()}</div>
+      `;
+      
+      fileInfo.style.display = 'block';
+    }
+
+    clearBtn.addEventListener('click', () => {
+      fileInput.value = '';
+      fileInfo.style.display = 'none';
+      uploadBtn.disabled = true;
+      clearBtn.disabled = true;
+      hideMessage();
+      progressContainer.style.display = 'none';
+      progressFill.style.width = '0%';
+    });
+
+    // Form submission
+    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const file = fileInput.files[0];
+      if (!file) {
+        showMessage('Please select an Excel file to upload.', 'error');
+        return;
+      }
+
+      // Validate file size (10MB limit)
+      if (file.size > 10 * 1024 * 1024) {
+        showMessage('File size exceeds 10MB limit. Please choose a smaller file.', 'error');
+        return;
+      }
+
+      // Validate file type
+      const validTypes = [
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/vnd.ms-excel'
+      ];
+      if (!validTypes.includes(file.type)) {
+        showMessage('Please select a valid Excel file (.xlsx or .xls).', 'error');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('excelFile', file);
+
+      try {
+        uploadBtn.disabled = true;
+        uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+        progressContainer.style.display = 'block';
+        hideMessage();
+        
+        // Simulate progress for better UX
+        let progress = 0;
+        const progressInterval = setInterval(() => {
+          progress += Math.random() * 15;
+          if (progress > 90) progress = 90;
+          progressFill.style.width = progress + '%';
+        }, 200);
+
+        const response = await fetch('/uploaduserexcel', {
+          method: 'POST',
+          body: formData
+        });
+
+        clearInterval(progressInterval);
+        progressFill.style.width = '100%';
+
+        const result = await response.json();
+
+        if (response.ok) {
+          let message = result.message;
+          if (result.details) {
+            const details = `
+📊 Upload Summary:
+Total Records: ${result.details.totalRecords}
+✅ Successfully Added: ${result.details.successCount}
+🔄 Updated: ${result.details.updatedCount}
+❌ Failed: ${result.details.failedCount}${result.details.skippedCount ? `
+⏭️ Skipped (Empty): ${result.details.skippedCount}` : ''}`;
+            message += '\n\n' + details;
+          }
+          showMessage(message, 'success');
+          
+          // Clear form after successful upload
+          setTimeout(() => {
+            clearBtn.click();
+          }, 5000);
+        } else {
+          let message = result.message || 'Upload failed';
+          if (result.errors && result.errors.length > 0) {
+            const errorDetails = '\n\n❌ Sample Errors:\n' + 
+              result.errors.slice(0, 5).map(err => 
+                `Row ${err.row}: ${err.message}`
+              ).join('\n');
+            message += errorDetails;
+          }
+          showMessage(message, 'error');
+        }
+      } catch (error) {
+        console.error('Upload error:', error);
+        showMessage('❌ Error uploading file. Please check your connection and try again.', 'error');
+      } finally {
+        uploadBtn.disabled = false;
+        uploadBtn.innerHTML = '<i class="fas fa-upload"></i> Upload Users';
+        setTimeout(() => {
+          progressContainer.style.display = 'none';
+          progressFill.style.width = '0%';
+        }, 2000);
+      }
+    });
+
+    function showMessage(text, type) {
+      messageElement.textContent = text;
+      messageElement.className = type;
+      messageElement.style.display = 'block';
+      
+      // Auto-hide success messages after 8 seconds
+      if (type === 'success') {
+        setTimeout(hideMessage, 8000);
+      }
+    }
+
+    function hideMessage() {
+      messageElement.style.display = 'none';
+    }
+
+    // Logout functionality
+    document.getElementById('logout-btn').addEventListener('click', () => {
+      userSession = {};
+      // Clear any cookies if they exist
+      document.cookie = 'userName=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      document.cookie = 'userEmail=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      window.location.href = '/';
+    });
+  </script>
+</body>
+</html>

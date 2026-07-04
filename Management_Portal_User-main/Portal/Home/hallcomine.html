@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hall Booking Portal</title>
+   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <style>
+    :root {
+      --bg-color: #0A0A0F;
+      --text-color: #E0E0E0;
+      --card-bg: rgba(20, 20, 30, 0.9);
+      --nav-bg: rgba(10, 10, 15, 0.9);
+      --input-bg: rgba(40, 40, 50, 0.8);
+      --gradient: linear-gradient(135deg, #6F42C1 , #BB86FC);
+      --gradient1: linear-gradient(235deg, #6F42C1 , #BB86FC);
+      --shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      --border: rgba(107, 52, 245, 0.2);
+      --btn:#BB86FC;
+      --btnhover:#6F42C1;
+}
+.light-mode {
+            --bg-color: #F5F6FA;
+            --text-color: #333;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --nav-bg: rgba(245, 246, 250, 0.9);
+            --input-bg: rgba(240, 240, 245, 0.8);
+            --table-cell-bg: rgba(230, 230, 235, 0.8);
+            --gradient: linear-gradient(135deg, #FFA07A , #FF69B4);
+            --gradient1: linear-gradient(235deg, #FFA07A , #FF69B4);
+            --gradient-start: #FF758C;
+            --gradient-end: #FCD968;
+            --shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            --border: rgba(0, 0, 0, 0.2);
+            --accent-color: #FF758C;
+            --btn:#FF69B4;
+            --btnhover:#cd3e85;
+
+        }
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: var(--bg-color);
+      color: var(--text-color);
+      overflow-x: hidden;
+      position: relative;
+      transition: background 0.3s, color 0.3s;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    #particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--nav-bg);
+      padding: 20px 40px;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      backdrop-filter: blur(10px);
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+    .nav-links {
+      list-style: none;
+      display: flex;
+      align-items: center;
+    }
+    .nav-links li {
+      margin: 0 20px;
+    }
+    .nav-links a {
+      color: var(--text-color);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 16px;
+      transition: color 0.3s, transform 0.3s;
+    }
+    .nav-links a:hover {
+      color: #6B34F5;
+      transform: translateY(-2px);
+    }
+    .hamburger {
+      display: none;
+      font-size: 28px;
+      color: var(--text-color);
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        background: var(--nav-bg);
+        position: absolute;
+        top: 80px;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        padding: 20px 0;
+        transition: background 0.3s;
+      }
+      .nav-links.active {
+        display: flex;
+      }
+      .hamburger {
+        display: block;
+      }
+      .nav-links li{
+        margin-bottom: 10px;
+      }
+    }
+    #logo {
+      height: 60px;
+      filter: brightness(1.2);
+    }
+    #logout-btn {
+      background: var(--gradient);
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+      box-shadow: 0 4px 15px rgba(107, 52, 245, 0.4);
+    }
+    #logout-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(107, 52, 245, 0.6);
+    }
+    #logout-btn:active {
+      background: #4a20b3;
+      transform: scale(0.98);
+    }
+    h1 {
+      text-align: center;
+      margin: 60px 0 40px;
+      color: var(--text-color);
+      font-size: 36px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      transition: color 0.3s;
+    }
+    .mode-toggle {
+      position: relative;
+      width: 60px;
+      height: 30px;
+      background: var(--gradient);
+      border-radius: 25px;
+      cursor: pointer;
+      overflow: hidden;
+    }
+    .slider {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 26px;
+      height: 26px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .light-mode .slider {
+      transform: translateX(30px);
+    }
+    .selector-box {
+      max-width: 800px; margin: 0 auto 40px auto;
+      background-color: #fff; padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .selector-grid {
+      display: flex; gap: 20px; flex-wrap: wrap;
+    }
+    .selector-grid div { flex: 1; min-width: 200px; }
+    label {
+      display: block; font-size: 14px;
+      margin-bottom: 6px; color: #333;
+    }
+    input[type="date"], input[type="time"], select {
+      width: 100%; padding: 8px;
+      font-size: 14px; border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    .grid {
+      display: flex; flex-wrap: wrap;
+      justify-content: space-evenly; gap: 24px;
+    }
+    .card {
+      background-color: #fff; width: 300px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      transition: transform 0.2s ease-in-out;
+      position: relative;
+      width: 400px;
+      margin-bottom: 30px;
+    }
+    .card.disabled {
+      filter: grayscale(100%);
+      opacity: 0.7;
+    }
+    .card:hover { transform: scale(1.02); }
+    .card img { width: 100%; height: 180px; object-fit: cover; }
+    .card-content { padding: 20px; }
+    .card h2 { margin: 0; font-size: 22px; color: var(--text-color);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      transition: color 0.3s; text-align: center;}
+    .card p { margin: 8px 0; font-size: 14px; color: #555; text-align: center; }
+    .btn {
+      margin-top: 10px; width: 100%; padding: 10px;
+       background-color: var(--btn);
+      border-radius: 25px;
+      font-size: 14px;
+      font-weight: 600;
+      color: white; border: none;
+      width: 100%;
+      transition: transform 0.3s, box-shadow 0.3s;
+      box-shadow: 0 4px 15px rgba(107, 52, 245, 0.4);
+      margin-top: 15px;
+    }
+    .btn:hover { background-color: var(--btnhover); }
+    .btn:disabled { background-color: #aaa; cursor: not-allowed; }
+    .modal {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0,0,0,0.6);
+      display: flex; justify-content: center; align-items: center;
+      z-index: 1000; display: none;
+    }
+    .modal-content {
+      background: white; border-radius: 10px;
+      padding: 20px; max-width: 500px; width: 90%;
+    }
+    .modal-content h3 { text-align: center;
+margin: 5px 0 10px;
+color: var(--text-color);
+font-weight: 700;
+text-transform: uppercase;
+letter-spacing: 1px;
+background: var(--gradient);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+transition: color 0.3s;}
+    .modal-content table {
+      width: 100%; border-collapse: collapse;
+      background: var(--card-bg);
+      border-radius: 5px;
+      box-shadow: var(--shadow);
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+    .modal-content table th, .modal-content table td {
+      padding: 12px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.3s;
+    }
+    .modal-content table th {
+      background: var(--gradient);
+      color: #fff;
+      font-weight: 600;
+    }
+    .modal-content table td {
+      background: var(--table-cell-bg);
+    }
+    .modal-content table tr:hover {
+      background: rgba(107, 52, 245, 0.1);
+      transition: 0.3s;
+    }
+    .close-btn {
+      margin-top: 20px; background: #e11d48;
+      color: white; border: none;
+      padding: 8px 16px; border-radius: 6px;
+      cursor: pointer;
+      margin-left: 43%;
+    }
+
+    @media (max-width: 960px) {
+      .selector-grid { flex-direction: column; }
+      .grid { flex-direction: column; align-items: center; }
+    }
+    #messageOk {
+            background: var(--gradient);
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            font-weight: 600;
+            margin: 0 10px;
+            margin-top: 10px;
+        }
+        @media (max-width: 600px) {
+      .messmodal{
+    margin-top: 80px;
+  }
+} 
+@media (max-width: 768px) {
+    .messmodal{
+    margin-top: 80px;
+  }
+}
+.messmodal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.6);
+    }
+
+    .messmodal-content {
+      background-color: #fff;
+      margin: 25% auto;
+      padding: 20px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 450px;
+      text-align: center;
+      color: palevioletred
+    }
+  </style>
+</head>
+<body>
+   <canvas id="particles"></canvas>
+    <nav class="navbar">
+      <img src="/images/logo.png" id="logo">
+      <ul class="nav-links">
+        <li class="dropdown">
+            <a href="/class">Classroom</a>
+        </li>
+        <li class="dropdown">
+            <a href="/hall">Hall</a>
+        </li>
+        <li class="dropdown">
+            <a href="/homepage">Home</a>
+        </li>
+        <li><button id="logout-btn">Logout</button></li>
+        <li><div class="mode-toggle" id="mode-toggle"><div class="slider">🌙</div></div></li>
+      </ul>
+      <div class="hamburger" onclick="toggleMenu()">☰</div>
+    </nav>     
+  <h1>Hall Booking Portal</h1>
+
+  <div class="selector-box">
+    <div class="selector-grid">
+      <div>
+        <label for="booking-date">Select Date:</label>
+        <input type="date" id="booking-date" onchange="checkAvailabilityAndRender()" />
+      </div>
+      <div>
+        <label for="start-time">Start Time:</label>
+        <input type="time" id="start-time" onchange="checkAvailabilityAndRender()" />
+      </div>
+      <div>
+        <label for="end-time">End Time:</label>
+        <input type="time" id="end-time" onchange="checkAvailabilityAndRender()" />
+      </div>
+    </div>
+  </div>
+
+  <div class="grid" id="hall-grid"></div>
+
+  <div class="modal" id="booking-modal">
+  <div class="modal-content">
+    <h3>Confirmed Bookings</h3>
+    <table>
+      <thead>
+        <tr><th>Date</th><th>Start</th><th>End</th><th>Message</th></tr>
+      </thead>
+      <tbody id="modal-bookings-body"></tbody>
+    </table>
+
+    <h3 style="margin-top: 20px;">Pending Requests</h3>
+    <table>
+      <thead>
+        <tr><th>Date</th><th>Start</th><th>End</th><th>Message</th></tr>
+      </thead>
+      <tbody id="pending-requests-body"></tbody>
+    </table>
+
+    <button class="close-btn" onclick="closeModal()">Close</button>
+  </div>
+</div>
+  <div id="messageModal" class="messmodal">
+  <div class="messmodal-content">
+    <p id="messageText">This is a message.</p>
+    <button id="messageOk">OK</button>
+  </div>
+</div>
+
+  <script>
+    const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const particlesArray = [];
+        class Particle {
+            constructor() {
+             this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.size = Math.random() * 2 + 1;
+            this.speedX = Math.random() * 0.5 - 0.25;
+            this.speedY = Math.random() * 0.5 - 0.25;
+            this.opacity = Math.random() * 0.5 + 0.2;
+        }
+        update() {
+            this.x += this.speedX;
+            this.y += this.speedY;
+            if (this.x > canvas.width) this.x = 0;
+            else if (this.x < 0) this.x = canvas.width;
+            if (this.y > canvas.height) this.y = 0;
+            else if (this.y < 0) this.y = canvas.height;
+        }
+        draw() {
+            ctx.fillStyle = document.body.classList.contains('light-mode') ? `rgba(255, 117, 140, ${this.opacity})` : `rgba(107, 52, 245, ${this.opacity})`;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        }
+        for (let i = 0; i < 100; i++) {
+        particlesArray.push(new Particle());
+        }
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particlesArray.forEach(particle => {
+            particle.update();
+            particle.draw();
+        });
+        requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+        window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        });
+        const modeToggle = document.getElementById('mode-toggle');
+        modeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('light-mode');
+        localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
+        modeToggle.querySelector('.slider').textContent = document.body.classList.contains('light-mode') ? '☀️' : '🌙';
+        });
+        window.addEventListener('DOMContentLoaded', () => {
+        if (localStorage.getItem('theme') === 'light') {
+        document.body.classList.add('light-mode');
+        modeToggle.querySelector('.slider').textContent = '☀️';
+        } else {
+            modeToggle.querySelector('.slider').textContent = '🌙';
+        }
+    });
+            document.addEventListener("DOMContentLoaded", function () {
+                let dropdown = document.querySelector(".dropdown");
+                let dropdownMenu = dropdown.querySelector("ul");
+                let timeout;
+
+                dropdown.addEventListener("mouseenter", function () {
+                clearTimeout(timeout);
+                dropdownMenu.style.display = "block";
+            });
+
+                dropdown.addEventListener("mouseleave", function () {
+                timeout = setTimeout(() => {
+                    dropdownMenu.style.display = "none";
+                }, 200);
+            });
+
+            dropdownMenu.addEventListener("mouseenter", function () {
+                clearTimeout(timeout);
+            });
+
+            dropdownMenu.addEventListener("mouseleave", function () {
+                timeout = setTimeout(() => {
+                    dropdownMenu.style.display = "none";
+                }, 200);
+            });
+
+            const userEmail = localStorage.getItem("userEmail");
+
+            if (!userEmail) {
+                showMessage("User email is missing. Please log in again.");
+                return;
+            }
+        });
+
+const halls = [
+  {
+    name: 'Anugraha Hall',
+    capacity: 300,
+    location: 'Block A',
+    description: 'Large hall with stage, projector, sound system, and air conditioning. Suitable for major college events.',
+    image: '/images/anugraha.jpeg'
+  },
+  {
+    name: 'Seminar Hall 1',
+    capacity: 100,
+    location: 'Block B',
+    description: 'Modern hall ideal for seminars and workshops. Equipped with projector, mic setup, and good seating.',
+    image: '/images/sh1.png'
+  },
+  {
+    name: 'Seminar Hall 2',
+    capacity: 50,
+    location: 'Admin Block',
+    description: 'Small, quiet hall for meetings and presentations. Well-suited for panel discussions and small groups.',
+    image: '/images/sh2.png'
+  }
+];
+
+
+    function renderInitialCards() {
+      const grid = document.getElementById('hall-grid');
+      grid.innerHTML = '';
+      for (const hall of halls) {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <img src="${hall.image}" alt="${hall.name}" />
+          <div class="card-content">
+            <h2>${hall.name}</h2>
+            <p>Capacity: ${hall.capacity} | Location: ${hall.location}</p>
+            <p>${hall.description}</p>
+            <input type="text" placeholder="Purpose / Message" id="message-${hall.name}" style="margin-top: 10px; padding: 8px; width: 100%; border-radius: 6px; border: 1px solid #ccc;" disabled />
+            <button class="btn" disabled>Book Now</button>
+            <button class="btn" onclick="viewBookings('${hall.name}')">View Bookings</button>
+          </div>`;
+        grid.appendChild(card);
+      }
+    }
+
+    async function fetchBookingsForVenue(venue, date) {
+      const res = await fetch(`/api/filtered-bookings?venue=${encodeURIComponent(venue)}&date=${date}`);
+      const data = await res.json();
+      return data.bookings || [];
+    }
+
+    async function checkAvailabilityAndRender() {
+      const date = document.getElementById('booking-date').value;
+      const start = document.getElementById('start-time').value;
+      const end = document.getElementById('end-time').value;
+      const grid = document.getElementById('hall-grid');
+      grid.innerHTML = '';
+
+      if (!date || !start || !end) {
+        renderInitialCards();
+        return;
+      }
+
+      for (const hall of halls) {
+        const bookings = await fetchBookingsForVenue(hall.name, date);
+        let isAvailable = true;
+
+        for (const b of bookings) {
+          if (start < b.endTime && end > b.startTime) {
+            isAvailable = false;
+            break;
+          }
+        }
+
+        const card = document.createElement('div');
+        card.className = 'card' + (isAvailable ? '' : ' disabled');
+        card.innerHTML = `
+          <img src="${hall.image}" alt="${hall.name}" />
+          <div class="card-content">
+            <h2>${hall.name}</h2>
+            <p>Capacity: ${hall.capacity} | Location: ${hall.location}</p>
+            <p>${hall.description}</p>
+            <input type="text" placeholder="Purpose / Message" id="message-${hall.name}" style="margin-top: 10px; padding: 8px; width: 100%; border-radius: 6px; border: 1px solid #ccc;" ${!isAvailable ? 'disabled' : ''} />
+            <button class="btn" ${!isAvailable ? 'disabled' : ''} onclick="bookHall('${hall.name}')">Book Now</button>
+            <button class="btn" onclick="viewBookings('${hall.name}')">View Bookings</button>
+          </div>`;
+        grid.appendChild(card);
+      }
+    }
+
+    async function bookHall(hallName) {
+  const date = document.getElementById("booking-date").value;
+  const startTime = document.getElementById("start-time").value;
+  const endTime = document.getElementById("end-time").value;
+  const message = document.getElementById(`message-${hallName}`).value;
+  const userEmail = localStorage.getItem("userEmail");
+
+  if (!date || !startTime || !endTime || !message) {
+    showMessage("All fields including message are required.");
+    return;
+  }
+
+  const now = new Date();
+  const start = new Date(`${date}T${startTime}`);
+  let end = new Date(`${date}T${endTime}`);
+
+  // Handle overnight booking: if end <= start, assume end is next day
+  if (end <= start) {
+    end.setDate(end.getDate() + 1);
+  }
+
+  const diffMinutes = (end - start) / (1000 * 60);
+
+  // Check if booking date is in the past
+  const bookingDate = new Date(date);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  if (bookingDate < today) {
+    showMessage("Booking date cannot be in the past.");
+    return;
+  }
+
+  // If booking is for today, make sure start time is not in the past
+  if (bookingDate.toDateString() === now.toDateString() && start < now) {
+    showMessage("Start time cannot be in the past.");
+    return;
+  }
+
+  // Check duration
+  if (diffMinutes < 30) {
+    showMessage("The booking duration must be at least 30 minutes.");
+    return;
+  }
+
+  try {
+    const res = await fetch("/submit-booking", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userEmail, venue: hallName, date, startTime, endTime, message }),
+    });
+
+    const data = await res.json();
+    showMessage(data.message || data.error);
+    if (res.ok) checkAvailabilityAndRender();
+  } catch (error) {
+    console.error("Booking error:", error);
+    showMessage("Error occurred while booking. Please try again.");
+  }
+}
+    async function viewBookings(hallName) {
+  const confirmedTbody = document.getElementById('modal-bookings-body');
+  const pendingTbody = document.getElementById('pending-requests-body');
+
+  confirmedTbody.innerHTML = '';
+  pendingTbody.innerHTML = '';
+
+  try {
+    // Fetch confirmed bookings
+    const confirmedRes = await fetch(`/api/bookings/upcoming?venue=${encodeURIComponent(hallName)}`);
+    const confirmedData = await confirmedRes.json();
+    const confirmed = confirmedData.bookings || [];
+
+    if (confirmed.length === 0) {
+      confirmedTbody.innerHTML = '<tr><td colspan="4">No confirmed bookings.</td></tr>';
+    } else {
+      confirmed.forEach(b => {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${b.date}</td><td>${b.startTime}</td><td>${b.endTime}</td><td>${b.message || ''}</td>`;
+        confirmedTbody.appendChild(row);
+      });
+    }
+
+    // Fetch pending requests
+    const pendingRes = await fetch(`/api/bookings/pending?venue=${encodeURIComponent(hallName)}`);
+    const pendingData = await pendingRes.json();
+    const pending = pendingData.bookings || [];
+
+    if (pending.length === 0) {
+      pendingTbody.innerHTML = '<tr><td colspan="4">No pending requests.</td></tr>';
+    } else {
+      pending.forEach(b => {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${b.date}</td><td>${b.startTime}</td><td>${b.endTime}</td><td>${b.message || ''}</td>`;
+        pendingTbody.appendChild(row);
+      });
+    }
+
+    document.getElementById('booking-modal').style.display = 'flex';
+  } catch (err) {
+    console.error("Error loading bookings:", err);
+    confirmedTbody.innerHTML = '<tr><td colspan="4">Error loading confirmed bookings.</td></tr>';
+    pendingTbody.innerHTML = '<tr><td colspan="4">Error loading pending requests.</td></tr>';
+    document.getElementById('booking-modal').style.display = 'flex';
+  }
+}
+
+function closeModal() {
+  document.getElementById('booking-modal').style.display = 'none';
+}
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const today = new Date();
+      const yyyy = today.getFullYear();
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      const dd = String(today.getDate()).padStart(2, '0');
+      document.getElementById('booking-date').value = `${yyyy}-${mm}-${dd}`;
+      renderInitialCards();
+    });
+    const logoutBtn = document.getElementById('logout-btn');
+        logoutBtn.addEventListener('click', () => {
+            // Clear cookies
+            document.cookie = 'userName=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            document.cookie = 'userEmail=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            localStorage.removeItem('email');
+            localStorage.removeItem('userEmail');
+            history.replaceState(null, null, "/");
+            // Redirect to LoginPage
+            window.location.href = '/';
+        });
+        gsap.from('.navbar', { duration: 1, y: -50, opacity: 0, ease: 'power3.out' });
+        gsap.from('h1', { duration: 1, opacity: 0, y: 50, ease: 'power3.out', delay: 0.2 });
+        gsap.from('.form-container', { duration: 1, opacity: 0, scale: 0.9, ease: 'power3.out', delay: 0.4 });
+        function toggleMenu() {
+      const navLinks = document.querySelector('.nav-links');
+      navLinks.classList.toggle('active');
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+    const dropdowns = document.querySelectorAll('.dropdown');
+
+    dropdowns.forEach(dropdown => {
+      const button = dropdown.querySelector('.dropbtn');
+
+      button.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        // Close other dropdowns
+        dropdowns.forEach(d => {
+          if (d !== dropdown) d.classList.remove('show');
+        });
+
+        // Toggle current dropdown
+        dropdown.classList.toggle('show');
+      });
+    });
+
+    // Close all dropdowns on outside click
+    document.addEventListener('click', function (e) {
+      dropdowns.forEach(dropdown => {
+        if (!dropdown.contains(e.target)) {
+          dropdown.classList.remove('show');
+        }
+      });
+    });
+  });
+  function showMessage(msg) {
+  document.getElementById("messageText").textContent = msg;
+  const modal = document.getElementById("messageModal");
+  modal.style.display = "block";
+
+  document.getElementById("messageOk").onclick = function () {
+    modal.style.display = "none";
+  };
+}
+  </script>
+</body>
+</html>

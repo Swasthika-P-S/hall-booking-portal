@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Locations</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            text-align: center;
+        }
+
+        h2 {
+            color: #444;
+        }
+
+        .tab-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            cursor: pointer;
+            padding: 12px 25px;
+            background: #007bff;
+            color: white;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+            font-size: 16px;
+        }
+
+        .tab.active {
+            background: #0056b3;
+        }
+
+        .tab:hover {
+            background: #0056b3;
+        }
+
+        .form-container {
+            display: none;
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+
+        .form-container.active {
+            display: flex;flex-direction: column;
+            justify-content: center;
+            padding: 40px;
+            align-items: center;
+        }
+
+        .form-container h3 {
+            margin-top: 0;
+            color: #444;
+            text-align: center;
+        }
+
+        input{
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+select {position: relative;
+            width: 50%;display: flex;justify-content: center;align-items: center;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {margin: 15px;
+            width: 50%;
+            padding: 12px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: #218838;
+        }
+        .flexor {
+position: relative;display:flex;
+        }
+        .inputforcap {
+position:relative;margin-right:10px;width:40%;
+        }
+        .selectof {
+position:relative;margin-left:10px;
+        }
+        @media screen and (max-width: 400px){
+
+        .flexor {
+position: relative;display:flex;
+flex-wrap: wrap;justify-content: center;align-items: center;
+width: 100%;
+        }
+        .inputforcap {
+            
+            width: 90%;
+    padding: 10px;
+    margin-right: 0;
+        }
+        
+        .selectof {width: 100%;
+    padding: 10px;
+position:relative;margin-left:0;
+        }
+        }
+        @media screen and (max-width: 280px) {
+            .tab-container {
+                display: flex;flex-wrap: wrap;
+            }button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Manage Locations</h1>
+
+    <div class="tab-container">
+        <span class="tab active" id="createTab">Create Location</span>
+        <span class="tab" id="deleteTab">Delete Location</span>
+    </div>
+<br><br>
+    <div id="createForm" class="form-container active">
+        <h3 style="font-weight: 900;font-family:Arial;font-size:1.3em;">Add Location</h3>
+        <input type="text" id="createLocation" placeholder="Location Name">
+        <div class="flexor"><input type="number" id="createCapacity" placeholder="Capacity" min="1" class="inputforcap">
+        <select id="createFloor"style="" class="selectof">
+            <option value="" disabled selected>Select Floor</option>
+            <option value="Ground">Ground Floor</option>
+            <option value="First">First Floor</option>
+            <option value="Second">Second Floor</option>
+        </select>
+        </div>
+        <button onclick="addLocation()">Add Location</button>
+    </div>
+
+    <div id="deleteForm" class="form-container">
+        <h3>Delete Location</h3>
+        <input type="text" id="deleteLocation" placeholder="Location Name">
+        <select id="deleteFloor">
+            <option value="" disabled selected>Select Floor</option>
+            <option value="Ground">Ground Floor</option>
+            <option value="First">First Floor</option>
+            <option value="Second">Second Floor</option>
+        </select>
+        <button onclick="deleteLocation()">Delete Location</button>
+    </div>
+
+    <script>document.addEventListener("DOMContentLoaded", function () {
+    const createTab = document.getElementById("createTab");
+    const deleteTab = document.getElementById("deleteTab");
+    const createForm = document.getElementById("createForm");
+    const deleteForm = document.getElementById("deleteForm");
+
+    // Handle tab switching
+    createTab.addEventListener("click", function () {
+        createTab.classList.add("active");
+        deleteTab.classList.remove("active");
+        createForm.classList.add("active");
+        deleteForm.classList.remove("active");
+    });
+
+    deleteTab.addEventListener("click", function () {
+        deleteTab.classList.add("active");
+        createTab.classList.remove("active");
+        deleteForm.classList.add("active");
+        createForm.classList.remove("active");
+    });
+
+    // Fetch locations on page load
+    fetchLocations();
+});
+
+// 🏢 Fetch all locations and populate dropdowns
+async function fetchLocations() {
+    try {
+        const response = await fetch("/get-cap-locations");
+        
+        if (!response.ok) {
+            throw new Error(`Server Error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        populateDeleteDropdowns(data.locations, data.floors);
+    } catch (error) {
+        console.error("Fetch Locations Error:", error);
+    }
+}
+
+// 🔽 Populate delete dropdowns correctly
+function populateDeleteDropdowns(locations, floors) {
+    const deleteLocationDropdown = document.getElementById("deleteLocation");
+    const deleteFloorDropdown = document.getElementById("deleteFloor");
+
+    // Clear existing options
+    deleteLocationDropdown.innerHTML = `<option value="" disabled selected>Select Location</option>`;
+    deleteFloorDropdown.innerHTML = `<option value="" disabled selected>Select Floor</option>`;
+
+    // Use a Set to prevent duplicate entries in dropdowns
+    const uniqueLocations = [...new Set(locations)];
+    const uniqueFloors = [...new Set(floors)];
+
+    uniqueLocations.forEach(loc => {
+        let option = document.createElement("option");
+        option.value = loc;
+        option.textContent = loc;
+        deleteLocationDropdown.appendChild(option);
+    });
+
+    uniqueFloors.forEach(floor => {
+        let floorOption = document.createElement("option");
+        floorOption.value = floor;
+        floorOption.textContent = floor;
+        deleteFloorDropdown.appendChild(floorOption);
+    });
+}
+
+// ➕ Function to add a location
+async function addLocation() {
+    const location = document.getElementById("createLocation").value.trim();
+    const floor = document.getElementById("createFloor").value;
+    const capacity = document.getElementById("createCapacity").value;
+
+    if (!location) {
+        alert("Please enter a location name.");
+        return;
+    }
+    if (!floor) {
+        alert("Please select a floor.");
+        return;
+    }
+    if (!capacity || isNaN(capacity) || capacity <= 0 || !Number.isInteger(Number(capacity))) {
+        alert("Please enter a valid capacity.");
+        return;
+    }
+
+    try {
+        const response = await fetch("/add-location", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ location, floor, capacity: parseInt(capacity) }),
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || "Error adding location");
+
+        alert("✅ " + data.message);
+        
+        // Reset the form inputs after successful addition
+        document.getElementById("createLocation").value = "";
+        document.getElementById("createFloor").selectedIndex = 0;
+        document.getElementById("createCapacity").value = "";
+
+        fetchLocations(); // Refresh dropdowns after update
+    } catch (error) {
+        alert("❌ " + error.message);
+    }
+}
+
+// ❌ Function to delete a location
+async function deleteLocation() {
+    const location = document.getElementById("deleteLocation").value;
+    const floor = document.getElementById("deleteFloor").value;
+
+    if (!location) {
+        alert("Please select a location.");
+        return;
+    }
+    if (!floor) {
+        alert("Please select a floor.");
+        return;
+    }
+
+    try {
+        const response = await fetch("/remove-location", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ location, floor }),
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || "Error deleting location");
+
+        alert("✅ " + data.message);
+
+        // Reset form selection after successful deletion
+        document.getElementById("deleteLocation").selectedIndex = 0;
+        document.getElementById("deleteFloor").selectedIndex = 0;
+
+        fetchLocations(); // Refresh dropdowns after update
+    } catch (error) {
+        alert("❌ " + error.message);
+    }
+}
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="Author" content="Keshav S">
+  <title>Teacher Portal</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script>
+  <style>
+:root {
+      --bg-color: #0A0A0F;
+      --text-color: #E0E0E0;
+      --card-bg: rgba(20, 20, 30, 0.9);
+      --nav-bg: rgba(10, 10, 15, 0.9);
+      --input-bg: rgba(40, 40, 50, 0.8);
+      --gradient: linear-gradient(135deg, #6F42C1 , #BB86FC);
+      --gradient1: linear-gradient(235deg, #6F42C1 , #BB86FC);
+      --shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      --border: rgba(107, 52, 245, 0.2);
+}
+.light-mode {
+            --bg-color: #F5F6FA;
+            --text-color: #333;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --nav-bg: rgba(245, 246, 250, 0.9);
+            --input-bg: rgba(240, 240, 245, 0.8);
+            --table-cell-bg: rgba(230, 230, 235, 0.8);
+            --gradient: linear-gradient(135deg, #FFA07A , #FF69B4);
+            --gradient1: linear-gradient(235deg, #FFA07A , #FF69B4);
+            --gradient-start: #FF758C;
+            --gradient-end: #FCD968;
+            --shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            --border: rgba(0, 0, 0, 0.2);
+            --accent-color: #FF758C;
+        }
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: var(--bg-color);
+      color: var(--text-color);
+      overflow-x: hidden;
+      position: relative;
+      transition: background 0.3s, color 0.3s;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    #particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
+    /* Intro Overlay */
+    .intro-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--bg-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 1;
+      transition: opacity 0.5s ease;
+    }
+    .intro-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .intro-logo {
+      height: 100px;
+      filter: brightness(1.1);
+      opacity: 0;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1001;
+    }
+    .intro-animation {
+      width: 200px;
+      height: 200px;
+      opacity: 0;
+    }
+    .logo {
+      display: block;
+      margin: 40px auto;
+      height: 80px;
+      filter: brightness(1.1);
+      opacity: 0;
+      visibility: hidden;
+    }
+    form {
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 30px;
+      background: var(--card-bg);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      transition: background 0.3s, box-shadow 0.3s, border 0.3s;
+      opacity: 0;
+    }
+    h2 {
+      text-align: center;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-color);
+      margin-bottom: 20px;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .error-message {
+      background: var(--error-bg);
+      color: var(--error-text);
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      text-align: center;
+      font-size: 14px;
+    }
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--input-bg);
+      color: var(--text-color);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.3s, background 0.3s, color 0.3s;
+    }
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+      border-color: var(--accent-color);
+      box-shadow: 0 0 5px rgba(139, 92, 246, 0.5);
+    }
+    input[type="submit"] {
+      width: 100%;
+      padding: 12px;
+      background: var(--gradient);
+      color: #FFFFFF;
+      border: none;
+      border-radius: 25px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+      margin-top: 10px;
+    }
+    input[type="submit"]:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(139, 92, 246, 0.6);
+    }
+    input[type="submit"]:active {
+      transform: scale(0.98);
+      background: var(--accent-color);
+    }
+    .mode-toggle {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      width: 60px;
+      height: 30px;
+      background: var(--gradient);
+      border-radius: 25px;
+      cursor: pointer;
+      overflow: hidden;
+    }
+    .slider {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 26px;
+      height: 26px;
+      background: #FFFFFF;
+      border-radius: 50%;
+      transition: transform 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .light-mode .slider {
+      transform: translateX(30px);
+    }
+  </style>
+</head>
+<body>
+  <canvas id="particles"></canvas>
+  <div class="gradient-bg" id="gradient-bg"></div>
+  <img src="/images/logo.png" alt="Logo" class="intro-logo" id="intro-logo">
+  <div class="intro-overlay" id="intro-overlay">
+    <div class="intro-animation" id="intro-animation"></div>
+  </div>
+  <img src="/images/logo.png" alt="Logo" class="logo" id="logo">
+  <form action="/login" method="POST">
+    <h2>Sign In</h2>
+    <div id="error-message" class="error-message" style="display: none;"></div>
+    <input type="text" id="user" name="username" placeholder="Username" required>
+    <input type="password" id="Password" name="password" placeholder="Password" required>
+    <input type="submit" value="Login">
+    <div class="mode-toggle" id="mode-toggle">
+      <div class="slider">🌙</div>
+    </div>
+  </form>
+
+  <script>
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const particlesArray = [];
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 2 + 1;
+        this.speedX = Math.random() * 0.5 - 0.25;
+        this.speedY = Math.random() * 0.5 - 0.25;
+        this.opacity = Math.random() * 0.5 + 0.2;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x > canvas.width) this.x = 0;
+        else if (this.x < 0) this.x = canvas.width;
+        if (this.y > canvas.height) this.y = 0;
+        else if (this.y < 0) this.y = canvas.height;
+      }
+      draw() {
+        ctx.fillStyle = document.body.classList.contains('light-mode') ? `rgb(255, 105, 180, ${this.opacity})` : `rgb(111, 66, 193, ${this.opacity})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+    for (let i = 0; i < 100; i++) {
+      particlesArray.push(new Particle());
+    }
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particlesArray.forEach(particle => {
+        particle.update();
+        particle.draw();
+      });
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+    document.addEventListener('DOMContentLoaded', () => {
+      const animation = lottie.loadAnimation({
+        container: document.getElementById('intro-animation'),
+        renderer: 'svg',
+        loop: false,
+        autoplay: false,
+        path: 'https://lottie.host/1b1b1b1b-1b1b-1b1b-1b1b-1b1b1b1b1b1b.json', // Replace with actual Lottie animation URL
+      });
+      const tl = gsap.timeline();
+      tl.to('#intro-logo', {
+        opacity: 1,
+        scale: 1.2,
+        duration: 1,
+        ease: 'power3.out',
+      })
+      .to('#intro-logo', {
+        scale: 1,
+        duration: 0.5,
+        ease: 'power3.inOut',
+      });
+      tl.to('#intro-animation', {
+        opacity: 1,
+        duration: 0.5,
+        ease: 'power3.out',
+        onStart: () => {
+          animation.play();
+        },
+      }, '-=0.5');
+      tl.to('#gradient-bg', {
+        opacity: 0.5,
+        duration: 2,
+        ease: 'power3.out',
+      }, '-=1');
+      tl.to('#intro-overlay', {
+        opacity: 0,
+        duration: 0.5,
+        ease: 'power3.in',
+        onComplete: () => {
+          document.getElementById('intro-overlay').classList.add('hidden');
+        },
+      });
+      const finalLogo = document.getElementById('logo');
+      const finalLogoRect = finalLogo.getBoundingClientRect();
+      const introLogo = document.getElementById('intro-logo');
+      tl.to('#intro-logo', {
+        height: '80px',
+        duration: 0.5,
+        ease: 'power3.out',
+      }, '-=0.5');
+      tl.to('#intro-logo', {
+        top: finalLogoRect.top + finalLogoRect.height / 2,
+        left: finalLogoRect.left + finalLogoRect.width / 2,
+        transform: 'translate(-50%, -50%)',
+        duration: 1,
+        ease: 'power3.out',
+      }, '-=0.5');
+      tl.to('form', {
+        opacity: 1,
+        y: 0,
+        duration: 1,
+        ease: 'power3.out',
+      }, '-=0.5');
+    });
+    const params = new URLSearchParams(window.location.search);
+    const error = params.get("error");
+    if (error) {
+      const errorMessageDiv = document.getElementById("error-message");
+      errorMessageDiv.textContent = error;
+      errorMessageDiv.style.display = "block";
+      gsap.from(errorMessageDiv, { duration: 0.5, opacity: 0, y: -20 });
+    }
+    const modeToggle = document.getElementById('mode-toggle');
+    modeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('light-mode');
+      localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
+      modeToggle.querySelector('.slider').textContent = document.body.classList.contains('light-mode') ? '☀️' : '🌙';
+    });
+    window.addEventListener('DOMContentLoaded', () => {
+      if (localStorage.getItem('theme') === 'light') {
+        document.body.classList.add('light-mode');
+        modeToggle.querySelector('.slider').textContent = '☀️';
+      } else {
+        modeToggle.querySelector('.slider').textContent = '🌙';
+      }
+    });
+  </script>
+</body>
+</html>

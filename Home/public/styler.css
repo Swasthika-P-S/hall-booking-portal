@@ -1,0 +1,361 @@
+:root {
+    --primary-teal: rgb(137, 209, 194);
+    --primary-orange: #b80257;
+    --primary-white: rgb(255, 255, 255);
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: RGB(255, 228, 196);
+    color: #333;
+}
+
+/* Navbar Styles */
+.logo img {
+    height: 40px;
+}
+
+nav .logo img:hover {
+    transform: scale(1.1);
+}
+
+nav .logo img {
+    transition: transform 0.3s ease-in-out;
+}
+
+nav {
+    background-color: #900246;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.1);
+    margin: 0;
+    padding: 0;
+}
+
+nav ul {
+    width: 100%;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+}
+
+.welcome-message {
+    flex-grow: 1;
+    text-align: center;
+    left: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+nav li {
+    height: 50px;
+}
+
+nav a {
+    height: 100%;
+    padding: 0 30px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    color: white;
+}
+
+nav a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+}
+
+.account .vatar img {
+    height: 40px;
+    border-radius: 50%;
+}
+
+.popperforvatar {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 50px;
+    background: white;
+    padding: 10px;
+    border: 1px solid #ccc;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+}
+
+.popperforvatar button {
+    background: #b80257;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.popperforvatar button:hover {
+    background: #910246;
+}
+
+/* Booking Form */
+.booking-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 40px;
+}
+
+.booking-form {
+    max-width: 500px;
+    width: 100%;
+    padding: 20px;
+    background: RGB(255, 228, 196);
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.booking-form h2 {
+    color: #b80257;
+    margin-bottom: 20px;
+}
+
+.booking-form label {
+    display: block;
+    font-weight: 600;
+    margin: 10px 0 5px;
+    color: #333;
+}
+
+.booking-form input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.booking-form button {
+    width: 100%;
+    background: #b80257;
+    color: white;
+    border: none;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.booking-form button:hover {
+    background: #910246;
+}
+
+/* Available Teachers */
+.available-teachers-container {
+    width: 100%;
+    margin: 40px auto;
+    text-align: center;
+    flex-wrap: wrap;
+    flex-direction: column;
+    
+}
+
+.available-teachers-container h3 {
+    color: #b80257;
+    margin-bottom: 20px;
+}
+
+#teachers-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+    margin-top: 40px;
+    margin-left: 40px;
+    margin-right: 40px;
+
+}
+
+.teacher-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    outline: var(--primary-orange);
+    opacity: 80%;
+    width: 90%;
+    flex: 1 0 26%;
+    max-width: 460px;
+    height: 100px;
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.teacher-info {
+    text-align: left;
+}
+
+.teacher-card h4 {
+    color: #b80257;
+    margin-bottom: 5px;
+}
+
+.teacher-card p {
+    font-size: 14px;
+    color: #333;
+}
+
+.available {
+    font-weight: bold;
+    color: green;
+}
+
+.notify-btn {
+    background-color: #b80257;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.notify-btn:hover {
+    background-color: #910246;
+}
+
+/* No Teachers Message */
+.no-teachers {
+    color: #333;
+    font-style: italic;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: RGB(255,228,196);
+  }
+nav .logo img {
+          height: 40px;
+          transition: transform 0.3s ease-in-out;
+      }
+      img{
+          overflow-clip-margin: content-box;
+          overflow: clip;
+      }
+  nav .logo img:hover {
+      transform: scale(1.1);
+  }
+  nav{
+      background-color: #900246;
+      box-shadow: 3px 3px 5px rgba(0,0,0,0.1);
+      margin: 0;
+      padding: 0;
+  }
+  nav ul {
+  width: 100%;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+}
+
+  nav li{
+      height: 50px;
+  }
+  nav a{
+      height: 100%;
+      padding: 0 20px;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      color: white;
+  }
+  .dropdown a:hover{
+      background-color: #f0f0f0;
+      color: black;
+  }
+  nav li:first-child{
+      margin-right: auto;
+  }
+  /* Dropdown Menu */
+.dropdown {
+  position: relative;
+}
+
+.dropdown ul {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  min-width: 140px;
+  border-radius: 9px;
+  margin-top: 2px;
+  transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.dropdown ul li {
+  width: 100%;
+  border-bottom: 1px inset #ccc;
+  border-radius: 5px;
+}
+
+.dropdown ul li a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3px;
+  text-decoration: none;
+  color: #900246;
+  transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.dropdown ul li a:hover {
+  background-color: #900246;
+  color: white;
+  opacity: 1;
+  visibility: visible;
+  display: flex;
+}
+.dropdown:hover ul {
+  display: block;
+  opacity: 1;
+  visibility: visible;
+}
+      .vatar{
+          margin-left: 10px;
+          margin-right: 10px;
+      }
+      .popperforvatar button {
+  padding: 10px;
+  cursor: pointer;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+}
+
